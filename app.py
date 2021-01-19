@@ -9,7 +9,7 @@ def home():
 def flappy_bird():
     if request.method == 'POST':
         print("I got this: ")
-        print(request.get_json())
+        print(request.form['data'])
         return "OK", 200
     return render_template("flappy-bird.html", data = {"something":"something2"})
 
