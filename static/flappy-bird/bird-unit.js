@@ -25,11 +25,14 @@ class BirdUnit {
             con = con.split("x");
             if(con.length == 0)
                 continue;
-            this.connections[con[0]] = (new NetConnection(con[0], con[1], con[2]));
+            if (!(con[0] in this.connections)){
+                this.connections[con[0]] = []
+            }
+            this.connections[con[0]].push(new NetConnection(con[0], con[1], con[2]));
         }
 
         this.nodes.sort(function(a, b) {
-            if(a.x > b.x)
+            if(a.x >= b.x)
                 return 1;
             else
                 return -1;

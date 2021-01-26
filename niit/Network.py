@@ -53,17 +53,20 @@ class Network:
         for con in self.genome.get_connections_list():
             from_id = con.get_from().get_innovation_number()
             to_id = con.get_to().get_innovation_number()
-            self.cons_dict[from_id] = [to_id, con.get_weight()]
+            if from_id not in self.cons_dict.keys():
+                self.cons_dict[from_id] = []    
+            self.cons_dict[from_id].append([to_id, con.get_weight()])
 
     def calculate(self):
         for node in self.nodes:
             if node.get_innovation_number() in self.cons_dict.keys():
-                to_id, weight = self.cons_dict[node.get_innovation_number()]
-                from_val = node.get_value()
-                to_val = self.nodes_dict[to_id].get_value()
-                to_val += from_val * weight
-                activated_val = Network.sigmoid(to_val)
-                self.nodes_dict[to_id].set_value(activated_val)
+                for item in self.cons_dict[node.get_innovation_number()]:
+                    to_id, weight = item[0], item[1]
+                    from_val = node.get_value()
+                    to_val = self.nodes_dict[to_id].get_value()
+                    to_val += from_val * weight
+                    activated_val = Network.sigmoid(to_val)
+                    self.nodes_dict[to_id].set_value(activated_val)
 
         output_values = []
         exp_values = []
@@ -95,9 +98,10 @@ class Network:
 
         for item in self.cons_dict.items():
             from_ = item[0]
-            to_ = item[1][0]
-            w = item[1][1]
-            s += str(from_) + sep1 + str(to_) + sep1 + str(w) + sep1
+            for things in item[1]:
+                to_ = things[0]
+                w = things[1]
+                s += str(from_) + sep1 + str(to_) + sep1 + str(w) + sep1
         return s
 
 

@@ -29,7 +29,7 @@ def flappy_bird():
 
 @app.route('/running-dinosaur')
 def running_dinosaur():
-    return render_template("flappy-bird.html")
+    return render_template("/flappy-bird.html")
 
 if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
