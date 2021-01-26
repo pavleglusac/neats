@@ -237,6 +237,23 @@ class Genome(object):
             print("Con. : Empty", end="")
         print()
         print()
+    
+    def get_data(self):
+        vals = [None, None]
+        data = ""
+        for node in self.nodes:
+            data += str(node.get_innovation_number()) + ":" + str(node.get_x()) +  ";"
+        data = data[:-1]
+        vals[0] = data
+        data = ""
+        for con in self.connections:
+            from_ = con.get_from().get_innovation_number()
+            to_ = con.get_to().get_innovation_number()
+            w = con.get_weight()
+            data += str(from_) + "x" + str(to_) + "x" + str(w) + ";"
+        data = data[:-1]
+        vals[1] = data
+        return (vals[0], vals[1])
 
     def __eq__(self, other):
         if len(self.get_connections()) != len(other.get_connections()):
