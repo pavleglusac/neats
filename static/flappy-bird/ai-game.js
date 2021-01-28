@@ -252,7 +252,7 @@ var ai_game_sketch = function(sketch)
         sound_wing = sketch.loadSound('static/flappy-bird/sound/wing.wav');
         sound_sweetwing = sketch.loadSound('static/flappy-bird/sound/swoosh.wav');
 
-        font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.ttf');
+        font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.TTF');
 
         flappy_bird.y = sketch.height / 2;
 

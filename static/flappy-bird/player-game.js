@@ -1,7 +1,6 @@
-console.log("Player game sketch 1");
+
 var player_game_sketch = function(sketch)
 {
-    console.log("Player game sketch 2");
     let c;
 
     var sprite_red_bird_downflap;
@@ -265,7 +264,7 @@ var player_game_sketch = function(sketch)
         sound_sweetwing = sketch.loadSound('static/flappy-bird/sound/swoosh.wav');
 
 
-        font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.ttf');
+        font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.TTF');
 
 
         //font_flappy = loadFont('https://flappybird.netlify.com/data/Assets/flappy-font.ttf');
