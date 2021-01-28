@@ -29,9 +29,9 @@ function create_units(){
     var input = [1, 2, 3, 4, 5];
     var b = units[0];
     randomize_scores();
-    new p5(network_sketch);
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
+    new p5(network_sketch);
 }
 
 function randomize_scores() {
