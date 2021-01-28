@@ -214,6 +214,7 @@ var ai_game_sketch = function(sketch)
             c.parent("ai");
         }
 
+        console.log("Hey dude I'm here");
         sketch.imageMode(sketch.CENTER);
         sketch.rectMode(sketch.CENTER);
         sketch.ellipseMode(sketch.CENTER);
