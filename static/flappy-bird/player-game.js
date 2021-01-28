@@ -1,6 +1,7 @@
-
+console.log("Player game sketch 1");
 var player_game_sketch = function(sketch)
 {
+    console.log("Player game sketch 2");
     let c;
 
     var sprite_red_bird_downflap;
