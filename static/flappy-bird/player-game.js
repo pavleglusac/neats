@@ -1,7 +1,7 @@
 
 var player_game_sketch = function(sketch)
 {
-    var c;
+    let c;
 
     var sprite_red_bird_downflap;
     var sprite_red_bird_midflap;
@@ -219,6 +219,9 @@ var player_game_sketch = function(sketch)
             c.parent("player");
         }
 
+        c.mousePressed(mPress);
+        c.mouseReleased(mRelease);
+
         sketch.imageMode(sketch.CENTER);
         sketch.rectMode(sketch.CENTER);
         sketch.ellipseMode(sketch.CENTER);
@@ -303,19 +306,19 @@ var player_game_sketch = function(sketch)
     }
 
     //EVENT
-    sketch.mousePressed = function() {
+    function mPress() {
         mousePress = true;
         mousePressEvent = true;
     }
-    sketch.mouseReleased = function(){
+    function mRelease(){
         mousePress = false;
         mouseReleaseEvent = true;
     }
-    sketch.keyPressed = function() {
+    function kPress() {
         keyPress = true;
         keyPressEvent = true;
     }
-    sketch.keyReleased = function(){
+    function kRelease(){
         keyPress = false;
         keyReleaseEvent = true;
     }
