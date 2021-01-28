@@ -29,6 +29,7 @@ function create_units(){
     var input = [1, 2, 3, 4, 5];
     var b = units[0];
     randomize_scores();
+    console.log("Newest");
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
     new p5(network_sketch);
@@ -54,6 +55,7 @@ var network_sketch = function(sketch)
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
         best_unit = findBest(units);
+        console.log(best_unit);
         netCanvas.background(255, 255, 255);
         var nodes = best_unit.nodes;
         var x = 50;
