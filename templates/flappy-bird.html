@@ -5,13 +5,28 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@0.8.0/lib/addons/p5.dom.min.js" type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@0.8.0/lib/addons/p5.sound.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Poppins:400,300,500,600,700' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css' rel='stylesheet' type='text/css'>
+    <link href='/static/styles/fb_style.css' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body style="background-color: #2c3e50;">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="">Neats</a>
+            </div>
+        </div>
+    </nav>
     <div id='content' style="display: table; margin: 0 auto; border-spacing: 10px;">
-        <div id = "player" width=400 height=710 style="display: table-cell; border-spacing: 10px;"></div>
-        <div id = "ai" width=400 height=710 style="display: table-cell; border-spacing: 10px;"></div>
-        <div id = "network" width=150 height=710 style="display: table-cell; border-spacing: 10px;"></div>
+        <div id = "player" width=400 height=710 class="game_sec"></div>
+        <div id = "ai" width=400 height=710 class="game_sec"></div>
+        <div id = "network" width=150 height=710 class="game_sec"></div>
     </div>
+    <script src="//code.jquery.com/jquery.js"></script>
+  		<!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+          
     <script src = "static/flappy-bird/bird-unit.js"></script>
     <script src = "static/flappy-bird/player-game.js"></script>
     <script src = "static/flappy-bird/ai-game.js"></script>

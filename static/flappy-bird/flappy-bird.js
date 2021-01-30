@@ -29,7 +29,6 @@ function create_units(){
     var input = [1, 2, 3, 4, 5];
     var b = units[0];
     randomize_scores();
-    console.log("Newest");
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
     new p5(network_sketch);
@@ -77,7 +76,6 @@ var network_sketch = function(sketch)
             {
                 y += 60;
             }
-            var c = sketch.circle(x, y, r);
             mapka[nodes[i].id] = [x, y];
         }
         var cons = best_unit.connections;
@@ -95,6 +93,16 @@ var network_sketch = function(sketch)
                 sketch.line(from_x, from_y, to_x, to_y);
             }
         }
+
+        for(var [key, value] of Object.entries(mapka))
+        {
+            var x = value[0];
+            var y = value[1];
+            var c = sketch.circle(x, y, r);
+        }
+
+        
+
         sketch.redraw();
     }   
 

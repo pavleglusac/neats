@@ -360,15 +360,24 @@ var ai_game_sketch = function(sketch)
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling * 2 - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
 
-        sketch.image(sprite_title, sketch.width / image_scaling /image_scaling, 200, sprite_title.width * image_scaling, sprite_title.height * image_scaling);
+
+        sketch.push();
+        sketch.fill(255, 255, 255);
+        sketch.stroke(50);
+        sketch.strokeWeight(5);
+        sketch.textSize(50);
+        sketch.text("AI's bird", sketch.width / 2, sketch.height /  2 - 150);
+        sketch.pop();
+
 
         flappy_bird.kinematicMove();
+
         sketch.push();
         sketch.fill(230, 97, 29);
         sketch.stroke(255);
         sketch.strokeWeight(3);
         sketch.textSize(30);
-        sketch.text('Tap to play', sketch.width / 2, sketch.height / 2 - 90);
+        sketch.text('Tap to run', sketch.width / 2, sketch.height / 2 - 90);
         sketch.pop();
         sketch.redraw();
 

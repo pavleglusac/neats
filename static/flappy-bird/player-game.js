@@ -265,16 +265,6 @@ var player_game_sketch = function(sketch)
 
 
         font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.TTF');
-
-
-        //font_flappy = loadFont('https://flappybird.netlify.com/data/Assets/flappy-font.ttf');
-
-        //var s=httpGet('data/Assets/flappy-font.ttf','.ttf','',ss);
-
-        //textFont(font_flappy);
-
-        //document.getElementById('h').innerHTML = window.location.href;
-
         flappy_bird.y = sketch.height / 2;
 
         try { sketch.textFont(font_flappy); } catch (e) { }
@@ -397,10 +387,18 @@ var player_game_sketch = function(sketch)
         sketch.image(sprite_floor, sprite_floor.width/image_scaling - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling * 2 - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
+        
+        sketch.push();
+        sketch.fill(255, 255, 255);
+        sketch.stroke(50);
+        sketch.strokeWeight(5);
+        sketch.textSize(50);
+        sketch.text("Player's bird", sketch.width / 2, sketch.height /  2 - 150);
+        sketch.pop();
 
-        sketch.image(sprite_title, sketch.width / image_scaling /image_scaling, 200, sprite_title.width * image_scaling, sprite_title.height * image_scaling);
 
         flappy_bird.kinematicMove();
+
         sketch.push();
         sketch.fill(230, 97, 29);
         sketch.stroke(255);
