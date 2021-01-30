@@ -16,7 +16,7 @@ class BirdUnit {
         var node_data = this.data[0].split(";");
         for(var node of node_data) {
             node = node.split(":");
-            var netNode = new NetNode(node[0], node[1])
+            var netNode = new NetNode(node[0], parseInt(node[1]))
             this.nodes.push(netNode);
             this.nodes_dict[node[0]] = netNode;
         }

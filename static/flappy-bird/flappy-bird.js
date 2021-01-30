@@ -59,7 +59,7 @@ var network_sketch = function(sketch)
         var nodes = best_unit.nodes;
         var x = 50;
         var y = -10;
-        var r = 50;
+        var r = 30;
         var prev_x = nodes[0].x;
         var mapka = {};
         sketch.fill(77, 210, 255);
@@ -70,7 +70,7 @@ var network_sketch = function(sketch)
             {
                 x += 90;
                 y = 50;
-                prev_x = x;
+                prev_x = nodes[i].x;
             }
             else
             {
@@ -90,7 +90,15 @@ var network_sketch = function(sketch)
                 var to = item.to;
                 var to_x = mapka[to][0];
                 var to_y = mapka[to][1];
+                sketch.push()
+                sketch.strokeWeight(Math.abs(10*item.weight));
+                if(item.weight > 0)
+                    sketch.stroke(255, 165, 159);
+                else
+                    sketch.stroke(136, 187, 228);
                 sketch.line(from_x, from_y, to_x, to_y);
+
+                sketch.pop();
             }
         }
 
@@ -100,8 +108,6 @@ var network_sketch = function(sketch)
             var y = value[1];
             var c = sketch.circle(x, y, r);
         }
-
-        
 
         sketch.redraw();
     }   

@@ -445,7 +445,7 @@ var player_game_sketch = function(sketch)
             sketch.scale(-1, 1);
             sketch.image(sprite_pipe, 0, 0, sprite_pipe.width * image_scaling, sprite_pipe.height * image_scaling);
             sketch.pop();
-            //Score
+            
             if (this.potential && (flappy_bird.x > this.x - sprite_bird.width * image_scaling / 2 - 5 && flappy_bird.x < this.x + sprite_bird.width * image_scaling / 2 + 5)) {
                 score++;
                 try { sound_point.play(); } catch (e) { }
