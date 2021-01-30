@@ -21,7 +21,7 @@ def flappy_bird():
         for unit in neat.get_units():
             unit.get_genome().mutate_connection()
             unit.get_genome().mutate_connection()
-            unit.get_genome().mutate_node()
+            unit.get_genome().mutate()
             unit.get_genome().mutate()
         data = encoder.encode(neat.units)
         return data

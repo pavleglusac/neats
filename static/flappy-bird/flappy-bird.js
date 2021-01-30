@@ -54,13 +54,15 @@ var network_sketch = function(sketch)
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
         best_unit = findBest(units);
-        console.log(best_unit);
         netCanvas.background(255, 255, 255);
         var nodes = best_unit.nodes;
+        //
+        var num_of_xs = find_num_of_xs(nodes);
+        console.log(num_of_xs);
+        var prev_x = nodes[0].x;
         var x = 50;
         var y = -10;
         var r = 30;
-        var prev_x = nodes[0].x;
         var mapka = {};
         sketch.fill(77, 210, 255);
         sketch.stroke(77, 210, 255);
@@ -69,7 +71,12 @@ var network_sketch = function(sketch)
             if(nodes[i].x > prev_x)
             {
                 x += 90;
-                y = 50;
+                if(x > sketch.width)
+                {
+                    sketch.resizeCanvas(sketch.width + 100, sketch.height);
+                }
+                y = 50 + (num_of_xs[-1] - num_of_xs[nodes[i].x])/2*60;
+                console.log(y);
                 prev_x = nodes[i].x;
             }
             else
@@ -102,6 +109,8 @@ var network_sketch = function(sketch)
             }
         }
 
+        sketch.strokeWeight(1);
+
         for(var [key, value] of Object.entries(mapka))
         {
             var x = value[0];
@@ -112,4 +121,32 @@ var network_sketch = function(sketch)
         sketch.redraw();
     }   
 
+}
+
+function find_num_of_xs(nodes)
+{
+    var maxx = 0;
+    var cur_best = 0;
+    var num_of_xs = {};
+    var prev_x = nodes[0].x;
+    for(var i = 0; i < nodes.length; i++)
+    {   
+        if(!(nodes[i].x in num_of_xs))
+            num_of_xs[nodes[i].x] = 0;
+        num_of_xs[nodes[i].x] = num_of_xs[nodes[i].x] + 1;
+
+        if(nodes[i].x != prev_x)
+        {
+            if(cur_best > maxx)
+                maxx = cur_best;
+            cur_best = 1;
+            prev_x = nodes[i].x;
+        }
+        else
+        {
+            cur_best++;
+        }
+    }
+    num_of_xs[-1] = maxx;
+    return num_of_xs;
 }
