@@ -22,7 +22,8 @@ a {
 .game_sec {
     display: table-cell; 
     border-spacing: 10px;
-    border-style: double;
+	/*border-style: double;*/
+	background-color: #3A3A3A;
 }
 
 .noselect {

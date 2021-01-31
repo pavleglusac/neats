@@ -54,7 +54,7 @@ var network_sketch = function(sketch)
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
         best_unit = findBest(units);
-        netCanvas.background(255, 255, 255);
+        sketch.background('#293241');
         var nodes = best_unit.nodes;
         //
         var num_of_xs = find_num_of_xs(nodes);
@@ -64,7 +64,8 @@ var network_sketch = function(sketch)
         var y = -10;
         var r = 30;
         var mapka = {};
-        sketch.fill(77, 210, 255);
+        
+        sketch.fill('#e0fbfc');
         sketch.stroke(77, 210, 255);
         for(var i = 0; i < nodes.length; i++) 
         {    
@@ -100,9 +101,9 @@ var network_sketch = function(sketch)
                 sketch.push()
                 sketch.strokeWeight(Math.abs(10*item.weight));
                 if(item.weight > 0)
-                    sketch.stroke(255, 165, 159);
+                    sketch.stroke('#ee6c4d');
                 else
-                    sketch.stroke(136, 187, 228);
+                    sketch.stroke('#3d5a80');
                 sketch.line(from_x, from_y, to_x, to_y);
 
                 sketch.pop();
