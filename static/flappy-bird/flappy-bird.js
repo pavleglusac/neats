@@ -58,7 +58,7 @@ var network_sketch = function(sketch)
         var nodes = best_unit.nodes;
         //
         var num_of_xs = find_num_of_xs(nodes);
-        console.log(num_of_xs);
+        // console.log(num_of_xs);
         var prev_x = nodes[0].x;
         var x = 50;
         var y = -10;
@@ -77,7 +77,7 @@ var network_sketch = function(sketch)
                     sketch.resizeCanvas(sketch.width + 100, sketch.height);
                 }
                 y = 50 + (num_of_xs[-1] - num_of_xs[nodes[i].x])/2*60;
-                console.log(y);
+                // console.log(y);
                 prev_x = nodes[i].x;
             }
             else
