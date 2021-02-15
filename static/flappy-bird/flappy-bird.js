@@ -2,6 +2,8 @@ var units_data = null;
 var units = [];
 let netCanvas;
 
+var best_unit = null;
+
 /*$(document).ready(function(){
     $("button").click(function(){
         $.post("/flappy-bird", {data:"postdata123"}, function(data, status){
@@ -68,10 +70,11 @@ var network_sketch = function(sketch)
     }
     
     sketch.draw = function(){
+        /*
         findBest = (arr) => {
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
-        best_unit = findBest(units);
+        best_unit = findBest(units);*/
         sketch.background('#293241');
         var nodes = best_unit.nodes;
         //

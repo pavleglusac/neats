@@ -256,6 +256,7 @@ var ai_game_sketch = function(sketch)
         for(i of Array(all_birds.length).keys()) {
             all_birds[i].y = sketch.height / 2;
         }
+        best_unit = all_birds[0].bird_unit;
 
         sprite_pipe = sketch.loadImage('static/flappy-bird/assets/pipe-green.png');
         sprite_city = sketch.loadImage('static/flappy-bird/assets/background-day-ns.png');
@@ -369,6 +370,7 @@ var ai_game_sketch = function(sketch)
                 if (all_birds[i].is_alive) {
                     best_bird = all_birds[i];
                     best_bird.frames = red_bird_frames;
+                    best_unit = best_bird.bird_unit;
                     break;
                 }
             }
@@ -463,6 +465,7 @@ var ai_game_sketch = function(sketch)
             resetGame();
             best_bird = all_birds[all_birds.length - 1];
             best_bird.frames = red_bird_frames;
+            best_unit = best_bird.bird_unit;
             
             for (i of Array(all_birds.length).keys()) {
                 console.log(i);
