@@ -373,7 +373,6 @@ var ai_game_sketch = function(sketch)
                 }
             }
         }
-        console.log(best_bird.v_distance_to_top_pipe);
 
         // Score
         if (!gameover) {
