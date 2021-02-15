@@ -53,7 +53,6 @@ function create_units(){
         units.push(bird);
     }
     var input = [1, 2, 3, 4, 5];
-    var b = units[0];
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
     new p5(network_sketch);
