@@ -38,6 +38,8 @@ function randomize_scores() {
     for(var i = 0; i < units_data.length; i++) 
     {
         units[i].score = Math.random();
+        var input = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
+        units[i].calculate(input);
     }
 }
 

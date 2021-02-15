@@ -56,7 +56,7 @@ var ai_game_sketch = function(sketch)
     var input_size = 5;
     var output_size = 2;
     var player_count = NUMBER_OF_BIRDS;
-    // var neat = Neat() construct an instance of neat?
+    // var neat = Neat() construct an instance of neat? nope
 
     var generation = 1;
     var all_birds = [];
