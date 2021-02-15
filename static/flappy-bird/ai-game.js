@@ -353,12 +353,14 @@ var ai_game_sketch = function(sketch)
                 all_birds[i].display();
                 all_birds[i].update();
                 all_birds[i].x = smoothMove(all_birds[i].x, 90, 0.02);
+                all_birds[i].bird_unit.score += score;
             }
         }
         sketch.redraw();
         
         if (all_dead) {
             generation++;
+            send_data();
             resetGame();
         }
         // Score
