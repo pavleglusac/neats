@@ -18,7 +18,6 @@ var ai_game_sketch = function(sketch)
     var sprite_pipe;
     var sprite_city;
     var sprite_floor;
-    var sprite_title;
 
     var font_flappy;
 
@@ -53,16 +52,12 @@ var ai_game_sketch = function(sketch)
     var all_dead = true;
 
     // NEAT VARS
-    var input_size = 5;
-    var output_size = 2;
-    var player_count = NUMBER_OF_BIRDS;
-    // var neat = Neat() construct an instance of neat?
+    var player_count = units.length;
 
     var generation = 1;
     var all_birds = [];
 
-    var best_bird = null; // need to initialize this right after intializing all_birds via best_player = all_birds[-1],
-    // also best_bird.frames = red_bird_frames;
+    var best_bird = null;
 
     class Bird{
         constructor(unit=null, frames=blue_bird_frames)
@@ -140,8 +135,8 @@ var ai_game_sketch = function(sketch)
                 if (this.angle > 90) {
                     this.angle = 90;
                 }
-
-                if (mousePressEvent || (keyPressEvent && key == ' ')) {
+                var network_output = this.bird_unit.calculate(this.inputs());
+                if (network_output[0] > network_output[1]) {
                     this.velocityY = 0;
                     this.fly = true;
                     this.target = clamp(this.y - 60, -19, sketch.height);
@@ -159,9 +154,7 @@ var ai_game_sketch = function(sketch)
                     this.velocityY += gravity;
                 }
                 else {
-                    // NOT SUPPOSED TO BE RANDOM. ONLY FOR MANUAL TESTING PURPOSES OF MULTIPLE BIRDS FLYING.
-                    var num = Math.random();  
-                    this.velocityY = -5 * num;
+                    this.velocityY = -5;
                     this.y -= 3;
                 }
 
@@ -307,7 +300,7 @@ var ai_game_sketch = function(sketch)
         console.log(">>> GENERATION: ", generation, " <<<");
         // if (generation > 1) { call neat.evolve() }
         new_birds = [];
-        for (unit in units) {
+        for (var unit of units) {
             new_birds.push(new Bird(unit));
         }
         all_birds = new_birds;
