@@ -2,7 +2,7 @@ var units_data = null;
 var units = [];
 let netCanvas;
 
-$(document).ready(function(){
+/*$(document).ready(function(){
     $("button").click(function(){
         $.post("/flappy-bird", {data:"postdata123"}, function(data, status){
             console.log("data "  + data + " status " + status);
@@ -10,7 +10,7 @@ $(document).ready(function(){
     }
     );
   }
-);
+);*/
 
 $(document).ready(function(){
     $.get("/flappy-bird?param=1", function(data, status){
@@ -18,6 +18,32 @@ $(document).ready(function(){
             create_units();
     });
 });
+
+
+function send_data()
+{
+    output_data = ""
+    for(var i = 0; i < units.length; i++)
+    {
+        output_data += units[i].id + ":" + units[i].score + ";";
+    }
+    $.post("/flappy-bird", {data:output_data}, function(data, status){
+        units_data = JSON.parse(data);
+        change_units();
+    });
+}
+
+
+function change_units()
+{
+    units = [];
+    for(var i = 0; i < units_data.length; i++) 
+    {
+        var obj = units_data[i];
+        var bird = new BirdUnit(i, obj[i]);
+        units.push(bird);
+    }
+}
 
 function create_units(){
     for(var i = 0; i < units_data.length; i++) 
@@ -27,19 +53,11 @@ function create_units(){
         units.push(bird);
     }
     var input = [1, 2, 3, 4, 5];
-    var b = units[0];
-    randomize_scores();
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
     new p5(network_sketch);
 }
 
-function randomize_scores() {
-    for(var i = 0; i < units_data.length; i++) 
-    {
-        units[i].score = Math.random();
-    }
-}
 
 var network_sketch = function(sketch)
 {
@@ -58,7 +76,7 @@ var network_sketch = function(sketch)
         var nodes = best_unit.nodes;
         //
         var num_of_xs = find_num_of_xs(nodes);
-        console.log(num_of_xs);
+        // console.log(num_of_xs);
         var prev_x = nodes[0].x;
         var x = 50;
         var y = -10;
@@ -77,7 +95,7 @@ var network_sketch = function(sketch)
                     sketch.resizeCanvas(sketch.width + 100, sketch.height);
                 }
                 y = 50 + (num_of_xs[-1] - num_of_xs[nodes[i].x])/2*60;
-                console.log(y);
+                // console.log(y);
                 prev_x = nodes[i].x;
             }
             else

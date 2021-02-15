@@ -10,18 +10,19 @@ def home():
 
 @app.route('/flappy-bird', methods = ['GET', 'POST'])
 def flappy_bird():
+    global neat
     param  = request.args.get('param', None)
 
     if request.method == 'POST':
-        print("I got this: ")
-        print(request.form['data'])
-        return "OK", 200
+        encoder.decode_data(request.form['data'])
+        neat.evolve()
+        data = encoder.encode(neat.units)
+        return data, 200
+
     if param == "1":
         neat = niit.Neat(5, 2, 50)
         for unit in neat.get_units():
             unit.get_genome().mutate_connection()
-            unit.get_genome().mutate_connection()
-            unit.get_genome().mutate()
             unit.get_genome().mutate()
         data = encoder.encode(neat.units)
         return data
