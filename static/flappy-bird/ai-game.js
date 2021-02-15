@@ -185,6 +185,7 @@ var ai_game_sketch = function(sketch)
         }
 
         inputs() {
+            this.look();
             return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY]
         }
 
@@ -356,6 +357,7 @@ var ai_game_sketch = function(sketch)
                 all_birds[i].bird_unit.score += score;
             }
         }
+
         sketch.redraw();
         
         if (all_dead) {
@@ -363,6 +365,16 @@ var ai_game_sketch = function(sketch)
             send_data();
             resetGame();
         }
+
+        if (!best_bird.is_alive) {
+            for (var i = all_birds.length; i >= 0; i++) {
+                if (all_birds[i].is_alive) {
+                    best_bird = all_birds[i];
+                }
+            }
+        }
+        console.log(best_bird.v_distance_to_top_pipe);
+
         // Score
         if (!gameover) {
             sketch.push();
@@ -448,7 +460,6 @@ var ai_game_sketch = function(sketch)
         sketch.redraw();
         
         if (mousePressEvent || (keyPressEvent && key == ' ')) {
-            console.log("weenis");
             page = "GAME";
             resetGame();
             

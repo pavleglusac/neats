@@ -54,7 +54,7 @@ class BirdUnit {
                 var from_val = node.value;
                 var to_val = this.nodes_dict[parseInt(to_id)].value;
                 to_val += from_val * weight;
-                var activated_val = this.sigmoid(from_val);
+                var activated_val = this.sigmoid(to_val);
                 this.nodes_dict[parseInt(to_id)].value = activated_val;
             }
         }
