@@ -178,7 +178,7 @@ var ai_game_sketch = function(sketch)
                 }
                 this.h_distance_to_pipe_left = reference.x - sprite_pipe.width * image_scaling / 2 - this.x - this.sprite_bird.width * image_scaling / 2;
                 this.h_distance_to_pipe_right = reference.x + sprite_pipe.width * image_scaling / 2 - this.x - this.sprite_bird.width * image_scaling / 2;
-                this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y + reference.gapSize);
+                this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
                 this.v_distance_to_bottom_pipe = (reference.y + reference.gapSize) - (this.y + this.sprite_bird.height * image_scaling / 2);
             }
             // console.log(this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe);
@@ -254,10 +254,8 @@ var ai_game_sketch = function(sketch)
         
         start_next_generation();
         for(i of Array(all_birds.length).keys()) {
-            all_birds[i].y = sketch.height / 2;  // ovo mozda treba na // POINT 0001
+            all_birds[i].y = sketch.height / 2;
         }
-        best_bird = all_birds[all_birds.length - 1];
-        best_bird.frames = red_bird_frames;
 
         sprite_pipe = sketch.loadImage('static/flappy-bird/assets/pipe-green.png');
         sprite_city = sketch.loadImage('static/flappy-bird/assets/background-day-ns.png');
@@ -367,9 +365,11 @@ var ai_game_sketch = function(sketch)
         }
 
         if (!best_bird.is_alive) {
-            for (var i = all_birds.length; i >= 0; i++) {
+            for (var i = all_birds.length-1; i >= 0; i--) {
                 if (all_birds[i].is_alive) {
                     best_bird = all_birds[i];
+                    best_bird.frames = red_bird_frames;
+                    break;
                 }
             }
         }
@@ -462,6 +462,8 @@ var ai_game_sketch = function(sketch)
         if (mousePressEvent || (keyPressEvent && key == ' ')) {
             page = "GAME";
             resetGame();
+            best_bird = all_birds[all_birds.length - 1];
+            best_bird.frames = red_bird_frames;
             
             for (i of Array(all_birds.length).keys()) {
                 console.log(i);
@@ -745,5 +747,4 @@ var ai_game_sketch = function(sketch)
             return false;
         }
     }
-
 }
