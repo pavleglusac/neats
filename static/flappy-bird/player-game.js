@@ -45,7 +45,7 @@ var player_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 80;
+    var gap = 85;
 
     var gameover = false;
     var page = "MENU";
@@ -183,7 +183,6 @@ var player_game_sketch = function(sketch)
 
                 gameover = false;
                 score = 0;
-                gap = 90;
             }
 
 
@@ -449,9 +448,6 @@ var player_game_sketch = function(sketch)
             if (this.potential && (flappy_bird.x > this.x - sprite_bird.width * image_scaling / 2 - 5 && flappy_bird.x < this.x + sprite_bird.width * image_scaling / 2 + 5)) {
                 score++;
                 try { sound_point.play(); } catch (e) { }
-
-                if (gap > 60) { gap--; }
-
                 this.potential = false;
             }
 
@@ -495,7 +491,6 @@ var player_game_sketch = function(sketch)
 
     function resetGame() {
         gameover = false;
-        gap = 80;
         speed = 5;
         score = 0;
         flappy_bird.y = sketch.height / 2

@@ -3,7 +3,7 @@ var ai_game_sketch = function(sketch)
 {
     var c;
 
-    const NUMBER_OF_BIRDS = 50;
+    const NUMBER_OF_BIRDS = units.length;
 
     var sprite_red_bird_downflap;
     var sprite_red_bird_midflap;
@@ -40,7 +40,7 @@ var ai_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 80;
+    var gap = 85;
 
     var overflowX = 0;
 
@@ -176,10 +176,10 @@ var ai_game_sketch = function(sketch)
                         break;
                     }
                 }
-                this.h_distance_to_pipe_left = reference.x - sprite_pipe.width * image_scaling / 2 - this.x - this.sprite_bird.width * image_scaling / 2;
-                this.h_distance_to_pipe_right = reference.x + sprite_pipe.width * image_scaling / 2 - this.x - this.sprite_bird.width * image_scaling / 2;
+                this.h_distance_to_pipe_left = this.x + this.sprite_bird.width * image_scaling / 2 - (reference.x - sprite_pipe.width * image_scaling / 2);
+                this.h_distance_to_pipe_right = this.x - this.sprite_bird.width * image_scaling / 2 - (reference.x + sprite_pipe.width * image_scaling / 2);
                 this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
-                this.v_distance_to_bottom_pipe = (reference.y + reference.gapSize) - (this.y + this.sprite_bird.height * image_scaling / 2);
+                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 -(reference.y + reference.gapSize);
             }
             // console.log(this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe);
         }
@@ -353,7 +353,6 @@ var ai_game_sketch = function(sketch)
                 all_birds[i].display();
                 all_birds[i].update();
                 all_birds[i].x = smoothMove(all_birds[i].x, 90, 0.02);
-                all_birds[i].bird_unit.score += score;
             }
         }
 
@@ -375,7 +374,7 @@ var ai_game_sketch = function(sketch)
                 }
             }
         }
-
+        
         // Score
         if (!gameover) {
             sketch.push();
@@ -513,9 +512,13 @@ var ai_game_sketch = function(sketch)
                 if (this.potential && (random_bird.x > this.x - random_bird.sprite_bird.width * image_scaling / 2 - 10 && random_bird.x < this.x + random_bird.sprite_bird.width * image_scaling / 2 + 10)) {
                     score++;
                     this.potential = false;
+                    for (var b of all_birds) {
+                        if (b.is_alive) {
+                            b.bird_unit.score += score;
+                        }
+                    }
                 }
             }
-
             for (i of Array(all_birds.length).keys()) {
                 bird = all_birds[i];
                 
