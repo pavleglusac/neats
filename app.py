@@ -28,9 +28,25 @@ def flappy_bird():
         return data
     return render_template("flappy-bird.html")
 
-@app.route('/running-dinosaur')
+@app.route('/running-dino')
 def running_dinosaur():
-    return render_template("/flappy-bird.html")
+    global neat
+    param  = request.args.get('param', None)
+
+    if request.method == 'POST':
+        encoder.decode_data(request.form['data'])
+        neat.evolve()
+        data = encoder.encode(neat.units)
+        return data, 200
+
+    if param == "1":
+        neat = niit.Neat(5, 2, 50)
+        for unit in neat.get_units():
+            unit.get_genome().mutate_connection()
+            unit.get_genome().mutate()
+        data = encoder.encode(neat.units)
+        return data
+    return render_template("/running-dino.html")
 
 if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
