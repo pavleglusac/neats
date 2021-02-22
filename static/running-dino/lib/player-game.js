@@ -2,13 +2,6 @@
 
 var player_game_sketch = function(sketch)
 {
-  /*
-  import config from './config.js'
-  import Bird from './actors/Bird.js';
-  import Cactus from './actors/Cactus.js';
-  import Cloud from './actors/Cloud.js';
-  import Dino from './actors/Dino.js';
-  import { randBoolean } from './utils.js'; */
   window.config = config;
 
   // for resetting settings that change due to
@@ -24,7 +17,8 @@ var player_game_sketch = function(sketch)
     groundY: 0,
     isRunning: false,
     level: 0,
-    score: 0
+    score: 0,
+    highscore: 0
   }
   // eslint-disable-next-line no-unused-vars
   let PressStartFont, sprite
@@ -41,6 +35,9 @@ var player_game_sketch = function(sketch)
   }
 
   function resetGame () {
+    if (STATE.highscore < STATE.score) { 
+      STATE.highscore = STATE.score;
+    }
     Object.assign(STATE, {
       birds: [],
       cacti: [],
@@ -170,7 +167,16 @@ var player_game_sketch = function(sketch)
     if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (randBoolean()) {
-        cacti.push(new Cactus(sketch.width, sketch.height))
+        let canSpawn = true
+        for (const bird of STATE.birds) {
+          if (sketch.width - bird.x < config.settings.birdSpawnBuffer) {
+            canSpawn = false
+            break
+          }
+        }
+        if (canSpawn) {
+          cacti.push(new Cactus(sketch.width, sketch.height))
+        }
       }
     }
   }
@@ -202,7 +208,16 @@ var player_game_sketch = function(sketch)
     if (sketch.frameCount % config.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
-        birds.push(new Bird(sketch.width, sketch.height))
+        let canSpawn = true
+        for (const cactus of STATE.cacti) {
+          if (sketch.width - cactus.x < config.settings.birdSpawnBuffer) {
+            canSpawn = false
+            break
+          }
+        }
+        if (canSpawn) {
+          birds.push(new Bird(sketch.width, sketch.height))
+        }
       }
     }
   }

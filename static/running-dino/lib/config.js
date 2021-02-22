@@ -3,12 +3,14 @@ var config = {
    * units
    * ppf: pixels per frame
    * fpa: frames per action
+   * px: pixels
    */
   settings: {
     bgSpeed: 8, // ppf
     birdSpeed: 7.2, // ppf
     birdSpawnRate: 240, // fpa
     birdWingsRate: 15, // fpa
+    birdSpawnBuffer: 200, // px
     cactiSpawnRate: 50, // fpa
     cloudSpawnRate: 200, // fpa
     cloudSpeed: 2, // ppf

@@ -21,7 +21,8 @@ class Bird extends Actor {
   }
 
   nextFrame () {
-    this.x -= config.settings.birdSpeed
+    this.x -= config.settings.bgSpeed
+    // this.x -= config.settings.birdSpeed original speed
     this.determineSprite()
   }
 

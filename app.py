@@ -40,7 +40,7 @@ def running_dinosaur():
         return data, 200
 
     if param == "1":
-        neat = niit.Neat(5, 2, 50)
+        neat = niit.Neat(4, 3, 70)
         for unit in neat.get_units():
             unit.get_genome().mutate_connection()
             unit.get_genome().mutate()

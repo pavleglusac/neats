@@ -23,9 +23,9 @@ class Dino extends Actor {
   inputs (next_obstacle) {
     // returns dino velocity, Y position of dino, distance to closest obstacle, y value of the closest obstacle
     if (next_obstacle) {
-      return [this.velocity, this.relativeY, next_obstacle.x - this.x + 25, next_obstacle.y]
+      return [config.settings.bgSpeed, this.relativeY, next_obstacle.x - this.x - 100, next_obstacle.y]
     } else {
-      return [this.velocity, this.relativeY, 500, 0]
+      return [config.settings.bgSpeed, this.relativeY, 500, 0]
     }
   }
 

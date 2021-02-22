@@ -9,7 +9,7 @@ var ai_game_sketch = function(sketch)
 
   var generation = 1
   var all_dinos = []
-  var best_dino = null
+  var bestDino = null
 
   // for resetting settings that change due to
   // difficulty increasing
@@ -23,7 +23,8 @@ var ai_game_sketch = function(sketch)
     groundY: 0,
     isRunning: false,
     level: 0,
-    score: 0
+    score: 0,
+    highscore: 0
   }
   // eslint-disable-next-line no-unused-vars
   let PressStartFont, sprite
@@ -45,13 +46,13 @@ var ai_game_sketch = function(sketch)
     let closest = STATE.cacti ? STATE.cacti[0] : null;
     let closestx = closest ? closest.x : 1000;
     for (bird of STATE.birds) {
-      if (bird.x < closestx && bird.x > best_dino.x) {
+      if (bird.x < closestx && bird.x > bestDino.x) {
         closest = bird;
         break;
       }
     }
     for (cactus of STATE.cacti) {
-      if (cactus.x < closestx && cactus.x > best_dino.x) {
+      if (cactus.x < closestx && cactus.x > bestDino.x) {
         closest = cactus;
         break;
       }
@@ -63,6 +64,10 @@ var ai_game_sketch = function(sketch)
     start_next_generation()
     all_dead = true
     player_count = NUMBER_OF_DINOS
+    if (STATE.highscore < STATE.score) { 
+      STATE.highscore = STATE.score;
+    }
+    console.log(STATE.highscore)
     Object.assign(STATE, {
       birds: [],
       cacti: [],
@@ -174,7 +179,16 @@ var ai_game_sketch = function(sketch)
     if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (randBoolean()) {
-        cacti.push(new Cactus(sketch.width, sketch.height))
+        let canSpawn = true
+        for (const bird of STATE.birds) {
+          if (sketch.width - bird.x < config.settings.birdSpawnBuffer) {
+            canSpawn = false
+            break
+          }
+        }
+        if (canSpawn) {
+          cacti.push(new Cactus(sketch.width, sketch.height))
+        }
       }
     }
   }
@@ -206,7 +220,16 @@ var ai_game_sketch = function(sketch)
     if (sketch.frameCount % config.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
-        birds.push(new Bird(sketch.width, sketch.height))
+        let canSpawn = true
+        for (const cactus of STATE.cacti) {
+          if (sketch.width - cactus.x < config.settings.birdSpawnBuffer) {
+            canSpawn = false
+            break
+          }
+        }
+        if (canSpawn) {
+          birds.push(new Bird(sketch.width, sketch.height))
+        }
       }
     }
   }
@@ -235,7 +258,7 @@ var ai_game_sketch = function(sketch)
 
     start_next_generation();
     best_unit = all_dinos[NUMBER_OF_DINOS-1].unit;
-    best_dino = all_dinos[NUMBER_OF_DINOS-1]
+    bestDino = all_dinos[NUMBER_OF_DINOS-1]
 
     canvas.mouseClicked(() => {
       if (STATE.gameOver) {
@@ -277,11 +300,11 @@ var ai_game_sketch = function(sketch)
       }
     }
 
-    if (!best_dino.is_alive) {
+    if (!bestDino.is_alive) {
       for (var i = all_dinos.length-1; i >= 0; i--) {
           if (all_dinos[i].is_alive) {
-            best_dino = all_dinos[i];
-            best_unit = best_dino.unit;
+            bestDino = all_dinos[i];
+            best_unit = bestDino.unit;
             break;
           }
       }

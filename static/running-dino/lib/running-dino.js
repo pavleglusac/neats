@@ -54,7 +54,7 @@ function create_units(){
         var bird = new BirdUnit(i, obj[i]);
         units.push(bird);
     }
-    var input = [1, 2, 3, 4, 5];
+    var input = [1, 2, 3, 4];
     new p5(player_game_sketch);
     new p5(ai_game_sketch);
     new p5(network_sketch);
@@ -74,7 +74,10 @@ var network_sketch = function(sketch)
         findBest = (arr) => {
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
-        best_unit = findBest(units);
+        if (!best_unit) {
+            console.log("WAT")
+            best_unit = findBest(units);
+        }
         sketch.background('#293241');
         var nodes = best_unit.nodes;
         //
