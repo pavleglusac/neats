@@ -25,6 +25,7 @@ $(document).ready(function(){
 function send_data()
 {
     output_data = ""
+    console.log("AAAAAAAAAAAAAAA");
     for(var i = 0; i < units.length; i++)
     {
         output_data += units[i].id + ":" + units[i].score + ";";
@@ -75,7 +76,6 @@ var network_sketch = function(sketch)
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
         if (!best_unit) {
-            console.log("WAT")
             best_unit = findBest(units);
         }
         sketch.background('#293241');

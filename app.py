@@ -28,7 +28,7 @@ def flappy_bird():
         return data
     return render_template("flappy-bird.html")
 
-@app.route('/running-dino')
+@app.route('/running-dino', methods = ['GET', 'POST'])
 def running_dinosaur():
     global neat
     param  = request.args.get('param', None)

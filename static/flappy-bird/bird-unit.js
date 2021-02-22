@@ -64,7 +64,7 @@ class BirdUnit {
             var node = this.nodes[this.nodes.length - i - 1];
             exp_values.push(Math.exp(node.value));
         }
-        var sumica = exp_values.reduce((a, b) => a + b, 0)
+        var sumica = exp_values.reduce((a, b) => a + b);
         for(var i = 0; i < this.output_size; i++)
         {
             var out = exp_values[i];
