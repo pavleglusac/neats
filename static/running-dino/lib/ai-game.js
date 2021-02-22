@@ -181,7 +181,13 @@ var ai_game_sketch = function(sketch)
       if (randBoolean()) {
         let canSpawn = true
         for (const bird of STATE.birds) {
-          if (sketch.width - bird.x < config.settings.birdSpawnBuffer) {
+          if (sketch.width - bird.x < config.settings.spawnBuffer) {
+            canSpawn = false
+            break
+          }
+        }
+        for (const c of cacti) {
+          if (sketch.width - c.x < config.settings.spawnBuffer) {
             canSpawn = false
             break
           }
@@ -222,7 +228,7 @@ var ai_game_sketch = function(sketch)
       if (randBoolean()) {
         let canSpawn = true
         for (const cactus of STATE.cacti) {
-          if (sketch.width - cactus.x < config.settings.birdSpawnBuffer) {
+          if (sketch.width - cactus.x < config.settings.spawnBuffer) {
             canSpawn = false
             break
           }
@@ -277,12 +283,9 @@ var ai_game_sketch = function(sketch)
     drawCacti()
     drawScore()
 
-    // console.log('Player count is ', player_count)
-
     if (STATE.level > 3) {
       drawBirds()
     }
-
     
     for (var dino of all_dinos) {
       if (dino.is_alive && dino.hits([STATE.cacti[0], STATE.birds[0]])) {
@@ -293,10 +296,13 @@ var ai_game_sketch = function(sketch)
       if (dino.is_alive) {
         var network_output = dino.unit.calculate(dino.inputs(get_next_obstacle()));
         if (network_output[0] > network_output[1] && network_output[0] > network_output[2]) {
+          dino.duck(false)
           dino.jump()
           dino.jumps++
         } else if (network_output[2] > network_output[1] && network_output[2] > network_output[0]) {
-          dino.duck()
+          dino.duck(true)
+        } else {
+          dino.duck(false)
         }
       }
     }
@@ -304,9 +310,9 @@ var ai_game_sketch = function(sketch)
     if (!bestDino.is_alive) {
       for (var i = all_dinos.length-1; i >= 0; i--) {
           if (all_dinos[i].is_alive) {
-            bestDino = all_dinos[i];
-            best_unit = bestDino.unit;
-            break;
+            bestDino = all_dinos[i]
+            best_unit = bestDino.unit
+            break
           }
       }
     }

@@ -10,7 +10,7 @@ var config = {
     birdSpeed: 7.2, // ppf
     birdSpawnRate: 240, // fpa
     birdWingsRate: 15, // fpa
-    birdSpawnBuffer: 200, // px
+    spawnBuffer: 200, // px
     cactiSpawnRate: 50, // fpa
     cloudSpawnRate: 200, // fpa
     cloudSpeed: 2, // ppf

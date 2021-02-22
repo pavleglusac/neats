@@ -1,6 +1,6 @@
 var units_data = null;
 var units = [];
-// let netCanvas;
+let netCanvas;
 
 var best_unit = null;
 

@@ -35,6 +35,7 @@ def running_dinosaur():
 
     if request.method == 'POST':
         encoder.decode_data(request.form['data'])
+        print("EVOLUTION BABY, EVOLUTION")
         neat.evolve()
         data = encoder.encode(neat.units)
         return data, 200

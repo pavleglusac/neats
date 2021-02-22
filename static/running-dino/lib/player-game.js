@@ -169,7 +169,7 @@ var player_game_sketch = function(sketch)
       if (randBoolean()) {
         let canSpawn = true
         for (const bird of STATE.birds) {
-          if (sketch.width - bird.x < config.settings.birdSpawnBuffer) {
+          if (sketch.width - bird.x < config.settings.spawnBuffer) {
             canSpawn = false
             break
           }
@@ -210,7 +210,7 @@ var player_game_sketch = function(sketch)
       if (randBoolean()) {
         let canSpawn = true
         for (const cactus of STATE.cacti) {
-          if (sketch.width - cactus.x < config.settings.birdSpawnBuffer) {
+          if (sketch.width - cactus.x < config.settings.spawnBuffer) {
             canSpawn = false
             break
           }

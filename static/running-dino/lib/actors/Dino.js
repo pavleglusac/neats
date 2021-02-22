@@ -23,7 +23,13 @@ class Dino extends Actor {
   inputs (next_obstacle) {
     // returns dino velocity, Y position of dino, distance to closest obstacle, y value of the closest obstacle
     if (next_obstacle) {
-      return [config.settings.bgSpeed, this.relativeY, next_obstacle.x - this.x - 100, next_obstacle.y]
+      let canDuck = 0
+      if (next_obstacle instanceof Bird) {
+        console.log("WEEEEEEEEEEEEEHOOO")
+        console.log(next_obstacle.y)
+        canDuck = 1
+      }
+      return [config.settings.bgSpeed, this.relativeY, next_obstacle.x - this.x - 100, canDuck]
     } else {
       return [config.settings.bgSpeed, this.relativeY, 500, 0]
     }
