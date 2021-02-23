@@ -1,4 +1,4 @@
-species_threshold = 2
+species_threshold = 8
 death_row = 0.95
 weight_shift_strength = 0.3
 weight_random_strength = 1
