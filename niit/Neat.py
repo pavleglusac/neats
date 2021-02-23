@@ -3,7 +3,7 @@ from niit.ConnectionGene import ConnectionGene
 from niit.Genome import Genome
 from niit.Unit import Unit
 from niit.Species import Species
-import random
+import random, os
 
 
 class Neat(object):
@@ -60,6 +60,20 @@ class Neat(object):
         self.mutate_connection_probability = 0.3
         self.mutate_node_probability = 0.01
 
+
+        self.setters = {
+                    "set_species_threshold" : self.set_species_threshold,
+                    "set_mutate_weight_shift_probability" : self.set_mutate_weight_shift_probability,
+                    "set_mutate_connection_enabled_probability" : self.set_mutate_connection_enabled_probability,
+                    "set_mutate_connection_probability" : self.set_mutate_connection_probability,
+                    "set_mutate_node_probability" : self.set_mutate_node_probability,
+                    "set_weight_shift_strength" : self.set_weight_shift_strength,
+                    "set_weight_random_strength" : self.set_weight_random_strength,
+                    "set_death_row" : self.set_death_row,
+                    "set_species_threshold" : self.set_species_threshold,
+                    "set_mutate_weight_random_probability" : self.set_mutate_weight_random_probability
+        }
+
     def get_species_threshold(self):
         return self.species_threshold
 
@@ -69,24 +83,51 @@ class Neat(object):
     def get_mutate_weight_shift_probability(self):
         return self.mutate_weight_shift_probability
 
+    def set_mutate_weight_shift_probability(self, probability):
+        self.mutate_weight_shift_probability = probability
+
     def get_mutate_weight_random_probability(self):
         return self.mutate_weight_random_probability
+
+    def set_mutate_weight_random_probability(self, probability):
+        self.mutate_weight_random_probability = probability
 
     def get_mutate_connection_enabled_probability(self):
         return self.mutate_connection_enabled_probability
 
+    def set_mutate_connection_enabled_probability(self, probability):
+        self.mutate_connection_enabled_probability = probability
+
     def get_mutate_connection_probability(self):
         return self.mutate_connection_probability
+
+    def set_mutate_connection_probability(self, probability):
+        self.mutate_connection_probability = probability
 
     def get_mutate_node_probability(self):
         return self.mutate_node_probability
 
+    def set_mutate_node_probability(self, probability):
+        self.mutate_node_probability = probability
+
     def get_weight_shift_strength(self):
         return self.weight_shift_strength
+
+    def set_weight_shift_strength(self, strength):
+        self.weight_shift_strength = strength
 
     def get_weight_random_strength(self):
         return self.weight_random_strength
 
+    def set_weight_random_strength(self, strength):
+        self.weight_random_strength = strength
+        
+    def set_death_row(self, percentage):
+        self.death_row = percentage
+
+    def set_species_threshold(self, threshold):
+        self.species_threshold = threshold
+    
     def get_units(self):
         return self.units
 
@@ -227,6 +268,14 @@ class Neat(object):
         for unit in self.units:
             unit.mutate()
 
+    def load_settings(self, path):
+        dirname = os.path.dirname(os.path.dirname(__file__)) + path
+        f = open(dirname)
+        for line in f:
+            line = line.split("=")
+            attr = ("set_" + line[0]).rstrip()            
+            val = eval(line[1])
+            self.setters[attr](val)
 
 if __name__ == "__main__":
     pass
