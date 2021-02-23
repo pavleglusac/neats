@@ -21,7 +21,8 @@ def flappy_bird():
 
     if param == "1":
         neat = niit.Neat(5, 2, 600)
-        neat.load_settings("\\static\\flappy-bird\\flappy_bird_settings.txt")
+        f = app.open_resource("static\\flappy-bird\\flappy_bird_settings.txt", "r")
+        neat.load_settings(f)
         for unit in neat.get_units():
             unit.get_genome().mutate_connection()
             unit.get_genome().mutate()
@@ -42,7 +43,8 @@ def running_dinosaur():
 
     if param == "1":
         neat = niit.Neat(4, 3, 100)
-        neat.load_settings("\\static\\running-dino\\running_dino_settings.txt")
+        f = app.open_resource("static\\running-dino\\running_dino_settings.txt", "r")
+        neat.load_settings(f)
         for unit in neat.get_units():
             unit.get_genome().mutate_connection()
             unit.get_genome().mutate_connection()

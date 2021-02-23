@@ -268,10 +268,10 @@ class Neat(object):
         for unit in self.units:
             unit.mutate()
 
-    def load_settings(self, path):
-        dirname = os.path.dirname(os.path.dirname(__file__)) + path
-        f = open(dirname)
-        for line in f:
+    def load_settings(self, file):
+        for line in file:
+            line = str(line)
+            print(line)
             line = line.split("=")
             attr = ("set_" + line[0]).rstrip()            
             val = eval(line[1])
