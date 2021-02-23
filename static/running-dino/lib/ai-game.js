@@ -77,6 +77,9 @@ var ai_game_sketch = function(sketch)
       score: 0
     })
 
+    bestDino = all_dinos[NUMBER_OF_DINOS-1]
+    best_unit = bestDino.unit;
+
     Object.assign(config.settings, SETTINGS_BACKUP)
     sketch.loop()
   }
@@ -264,8 +267,6 @@ var ai_game_sketch = function(sketch)
     sketch.noLoop()
 
     start_next_generation();
-    best_unit = all_dinos[NUMBER_OF_DINOS-1].unit;
-    bestDino = all_dinos[NUMBER_OF_DINOS-1]
 
     canvas.mouseClicked(() => {
       if (STATE.gameOver) {

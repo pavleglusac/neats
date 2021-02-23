@@ -25,7 +25,6 @@ $(document).ready(function(){
 function send_data()
 {
     output_data = ""
-    console.log("AAAAAAAAAAAAAAA");
     for(var i = 0; i < units.length; i++)
     {
         output_data += units[i].id + ":" + units[i].score + ";";

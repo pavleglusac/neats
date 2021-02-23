@@ -41,8 +41,12 @@ def running_dinosaur():
         return data, 200
 
     if param == "1":
-        neat = niit.Neat(4, 3, 70)
+        neat = niit.Neat(4, 3, 100)
         for unit in neat.get_units():
+            unit.get_genome().mutate_connection()
+            unit.get_genome().mutate_connection()
+            unit.get_genome().mutate_connection()
+            unit.get_genome().mutate_connection()
             unit.get_genome().mutate_connection()
             unit.get_genome().mutate()
         data = encoder.encode(neat.units)
