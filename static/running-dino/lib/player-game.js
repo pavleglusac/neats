@@ -230,7 +230,7 @@ var player_game_sketch = function(sketch)
 
   // triggered after preload
   sketch.setup = () => {
-    const canvas = sketch.createCanvas(600, 300)
+    const canvas = sketch.createCanvas(1200, 300)
     canvas.parent("player");
     STATE.groundY = sketch.height - config.sprites.ground.h / 2
     sketch.noLoop()

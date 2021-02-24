@@ -1,9 +1,9 @@
-species_threshold = 8
-death_row = 0.95
+species_threshold = 4
+death_row = 0.8
 weight_shift_strength = 0.3
 weight_random_strength = 1
 mutate_weight_shift_probability = 0.05
 mutate_weight_random_probability = 0.05
 mutate_connection_enabled_probability = 0.02
-mutate_connection_probability = 0.2
+mutate_connection_probability = 0.1
 mutate_node_probability = 0.01

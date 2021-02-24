@@ -48,14 +48,16 @@ class BirdUnit {
         for(var node of this.nodes) {
             if(node.id in this.connections)
             {
-
-                var to_id = this.connections[node.id][0].to;
-                var weight = this.connections[node.id][0].weight;
-                var from_val = node.value;
-                var to_val = this.nodes_dict[parseInt(to_id)].value;
-                to_val += from_val * weight;
-                var activated_val = this.sigmoid(to_val);
-                this.nodes_dict[parseInt(to_id)].value = activated_val;
+                for(var tode of this.connections[node.id])
+                {
+                    var to_id = tode.to;
+                    var weight = tode.weight;
+                    var from_val = node.value;
+                    var to_val = this.nodes_dict[parseInt(to_id)].value;
+                    to_val += from_val * weight;
+                    var activated_val = this.sigmoid(to_val);
+                    this.nodes_dict[parseInt(to_id)].value = activated_val;
+                }
             }
         }
         var exp_values = [];

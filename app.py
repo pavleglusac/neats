@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import niit.NeatEncoder as encoder
 import niit.Neat as niit
 app = Flask(__name__)
+app.config['DEBUG'] = True
 neat = None
 
 @app.route('/')
@@ -20,7 +21,7 @@ def flappy_bird():
         return data, 200
 
     if param == "1":
-        neat = niit.Neat(5, 2, 600)
+        neat = niit.Neat(5, 2, 100)
         f = app.open_resource("static/flappy-bird/flappy_bird_settings.txt", "r")
         neat.load_settings(f)
         for unit in neat.get_units():

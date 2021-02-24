@@ -261,7 +261,7 @@ var ai_game_sketch = function(sketch)
   // triggered after preload
   sketch.setup = () => {
 
-    const canvas = sketch.createCanvas(600, 300)
+    const canvas = sketch.createCanvas(1200, 300)
     canvas.parent("ai");
     STATE.groundY = sketch.height - config.sprites.ground.h / 2
     sketch.noLoop()

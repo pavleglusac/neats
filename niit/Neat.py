@@ -208,7 +208,9 @@ class Neat(object):
     def evolve(self):
         self.generate_species()
         self.kill_some()
+        print("Num of species before ", len(self.species))
         self.remove_extinct_species()
+        print("Num of species after ", len(self.species))
         self.reproduce()
         self.mutate()
 
@@ -271,7 +273,6 @@ class Neat(object):
     def load_settings(self, file):
         for line in file:
             line = str(line)
-            print(line)
             line = line.split("=")
             attr = ("set_" + line[0]).rstrip()            
             val = eval(line[1])
