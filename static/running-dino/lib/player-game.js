@@ -6,7 +6,7 @@ var player_game_sketch = function(sketch)
 
   // for resetting settings that change due to
   // difficulty increasing
-  const SETTINGS_BACKUP = { ...config.settings }
+  const SETTINGS_BACKUP = { ...config.settings };
   const STATE = {
     birds: [],
     cacti: [],
@@ -19,19 +19,19 @@ var player_game_sketch = function(sketch)
     level: 0,
     score: 0,
     highscore: 0
-  }
+  };
   // eslint-disable-next-line no-unused-vars
-  let PressStartFont, sprite
+  let PressStartFont, sprite;
 
   // global references for debugging
-  window.sketch = sketch
-  window.state = STATE
+  window.sketch = sketch;
+  window.state = STATE;
 
   function spriteImage (spriteName, ...clientCoords) {
-    const { h, w, x, y } = config.sprites[spriteName]
+    const { h, w, x, y } = config.sprites[spriteName];
 
     // eslint-disable-next-line no-useless-call
-    return sketch.image.apply(sketch, [sprite, ...clientCoords, w / 2, h / 2, x, y, w, h])
+    return sketch.image.apply(sketch, [sprite, ...clientCoords, w / 2, h / 2, x, y, w, h]);
   }
 
   function resetGame () {
@@ -46,243 +46,272 @@ var player_game_sketch = function(sketch)
       isRunning: true,
       level: 0,
       score: 0
-    })
+    });
 
-    Object.assign(config.settings, SETTINGS_BACKUP)
-    sketch.loop()
+    Object.assign(config.settings, SETTINGS_BACKUP);
+    sketch.loop();
   }
 
   function endGame () {
-    const iconSprite = config.sprites.replayIcon
-    const padding = 15
+    const iconSprite = config.sprites.replayIcon;
+    const padding = 15;
 
-    sketch.fill('#535353')
-    sketch.textAlign(sketch.CENTER)
-    sketch.textFont(PressStartFont)
-    sketch.textSize(12)
-    sketch.text('G A M E  O V E R', (sketch.width / 2), (sketch.height / 2 - sketch.textSize() / 2 - padding))
-    spriteImage('replayIcon', (sketch.width / 2 - iconSprite.w / 4), (sketch.height / 2 - iconSprite.h / 4 + padding))
+    sketch.fill('#535353');
+    sketch.textAlign(sketch.CENTER);
+    sketch.textFont(PressStartFont);
+    sketch.textSize(12);
+    sketch.text('G A M E  O V E R', (sketch.width / 2), (sketch.height / 2 - sketch.textSize() / 2 - padding));
+    spriteImage('replayIcon', (sketch.width / 2 - iconSprite.w / 4), (sketch.height / 2 - iconSprite.h / 4 + padding));
 
-    STATE.isRunning = false
-    sketch.noLoop()
+    STATE.isRunning = false;
+    sketch.noLoop();
   }
 
   function increaseDifficulty () {
-    const { settings } = config
-    const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings
-    const { level } = STATE
+    const { settings } = config;
+    const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
+    const { level } = STATE;
 
-    if (level > 4 && level < 8) {
-      settings.bgSpeed++
-      settings.birdSpeed = settings.bgSpeed * 0.8
+    if (level > 5 && level < 8) {
+      settings.bgSpeed++;
     } else if (level > 7) {
-      settings.bgSpeed = Math.ceil(bgSpeed * 1.1)
-      settings.birdSpeed = settings.bgSpeed * 0.9
-      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.98)
+      settings.bgSpeed = Math.ceil(bgSpeed * 1.02);
+      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.96);
 
       if (level > 7 && level % 2 === 0 && dinoLegsRate > 3) {
-        settings.dinoLegsRate--
+        settings.dinoLegsRate--;
       }
     }
   }
 
   function updateScore () {
     if (sketch.frameCount % config.settings.scoreIncreaseRate === 0) {
-      const oldLevel = STATE.level
+      const oldLevel = STATE.level;
 
-      STATE.score++
-      STATE.level = Math.floor(STATE.score / 100)
+      STATE.score++;
+      STATE.level = Math.floor(STATE.score / 100);
 
       if (STATE.level !== oldLevel) {
-        increaseDifficulty()
+        increaseDifficulty();
       }
     }
   }
 
   function drawGround () {
-    const { bgSpeed } = config.settings
-    const groundImgWidth = config.sprites.ground.w / 2
+    const { bgSpeed } = config.settings;
+    const groundImgWidth = config.sprites.ground.w / 2;
 
-    spriteImage('ground', STATE.groundX, STATE.groundY)
-    STATE.groundX -= bgSpeed
+    spriteImage('ground', STATE.groundX, STATE.groundY);
+    STATE.groundX -= bgSpeed;
 
     // append second image until first is fully translated
     if (STATE.groundX <= -groundImgWidth + sketch.width) {
-      spriteImage('ground', (STATE.groundX + groundImgWidth), STATE.groundY)
-
+      spriteImage('ground', (STATE.groundX + groundImgWidth), STATE.groundY);
       if (STATE.groundX <= -groundImgWidth) {
-        STATE.groundX = -bgSpeed
+        STATE.groundX = -bgSpeed;
       }
     }
   }
 
   function drawClouds () {
-    const { clouds } = STATE
+    const { clouds } = STATE;
 
     for (let i = clouds.length - 1; i >= 0; i--) {
-      const cloud = clouds[i]
+      const cloud = clouds[i];
 
-      cloud.nextFrame()
+      cloud.nextFrame();
 
       if (cloud.x <= -cloud.width) {
         // remove if off screen
-        clouds.splice(i, 1)
+        clouds.splice(i, 1);
       } else {
-        spriteImage(cloud.sprite, cloud.x, cloud.y)
+        spriteImage(cloud.sprite, cloud.x, cloud.y);
       }
     }
 
     if (sketch.frameCount % config.settings.cloudSpawnRate === 0) {
-      clouds.push(new Cloud(sketch.width))
+      clouds.push(new Cloud(sketch.width));
     }
   }
 
   function drawDino () {
-    const { dino } = STATE
+    const { dino } = STATE;
 
     if (dino) {
-      dino.nextFrame()
-      spriteImage(dino.sprite, dino.x, dino.y)
+      dino.nextFrame();
+      spriteImage(dino.sprite, dino.x, dino.y);
     } else {
-      spriteImage('dino', 25, (sketch.height - (config.sprites.dino.h / 2) - 4))
+      spriteImage('dino', 25, (sketch.height - (config.sprites.dino.h / 2) - 4));
     }
   }
 
   function drawCacti () {
-    const { cacti } = STATE
+    const { cacti } = STATE;
 
     for (let i = cacti.length - 1; i >= 0; i--) {
-      const cactus = cacti[i]
+      const cactus = cacti[i];
 
-      cactus.nextFrame()
+      cactus.nextFrame();
 
       if (cactus.x <= -cactus.width) {
         // remove if off screen
-        cacti.splice(i, 1)
+        cacti.splice(i, 1);
       } else {
-        spriteImage(cactus.sprite, cactus.x, cactus.y)
+        spriteImage(cactus.sprite, cactus.x, cactus.y);
       }
     }
 
     if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (randBoolean()) {
-        let canSpawn = true
+        let canSpawn = true;
         for (const bird of STATE.birds) {
           if (sketch.width - bird.x < config.settings.spawnBuffer) {
-            canSpawn = false
-            break
+            canSpawn = false;
+            break;
+          }
+        }
+        for (const c of cacti) {
+          if (sketch.width - c.x < config.settings.spawnBuffer) {
+            canSpawn = false;
+            break;
           }
         }
         if (canSpawn) {
-          cacti.push(new Cactus(sketch.width, sketch.height))
+          cacti.push(new Cactus(sketch.width, sketch.height));
         }
       }
     }
   }
 
   function drawScore () {
-    sketch.fill('#535353')
-    sketch.textAlign(sketch.RIGHT)
-    sketch.textFont(PressStartFont)
-    sketch.textSize(12)
-    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize())
+    sketch.fill('#535353');
+    sketch.textAlign(sketch.RIGHT);
+    sketch.textFont(PressStartFont);
+    sketch.textSize(12);
+    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize());
   }
 
   function drawBirds () {
-    const { birds } = STATE
-
+    const { birds } = STATE;
     for (let i = birds.length - 1; i >= 0; i--) {
-      const bird = birds[i]
+      const bird = birds[i];
 
-      bird.nextFrame()
+      bird.nextFrame();
 
       if (bird.x <= -bird.width) {
         // remove if off screen
-        birds.splice(i, 1)
+        birds.splice(i, 1);
       } else {
-        spriteImage(bird.sprite, bird.x, bird.y)
+        spriteImage(bird.sprite, bird.x, bird.y);
       }
     }
 
     if (sketch.frameCount % config.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
-        let canSpawn = true
+        let canSpawn = true;
         for (const cactus of STATE.cacti) {
           if (sketch.width - cactus.x < config.settings.spawnBuffer) {
-            canSpawn = false
-            break
+            canSpawn = false;
+            break;
           }
         }
         if (canSpawn) {
-          birds.push(new Bird(sketch.width, sketch.height))
+          birds.push(new Bird(sketch.width, sketch.height));
         }
       }
     }
   }
 
+  function displayStartingText() {
+    sketch.push();  
+    sketch.textAlign(sketch.CENTER);
+    sketch.fill(55, 55, 55);
+    sketch.textSize(42);
+    sketch.text("PLAYER'S DINO", sketch.width / 2, sketch.height / 2);
+    sketch.pop();
+    
+    sketch.push();
+    sketch.textAlign(sketch.CENTER);
+    sketch.fill(55, 55, 55);
+    sketch.textSize(25);
+    sketch.text("Jump to start", sketch.width / 2, sketch.height / 2 + 32);
+    sketch.pop();
+
+    sketch.push();
+    sketch.textAlign(sketch.CENTER);
+    sketch.fill(55, 55, 55);
+    sketch.textSize(15);
+    sketch.text("Controls: W/SPACE = jump, S = duck", sketch.width / 2, sketch.height / 2 + 120);
+    sketch.pop();
+  }
+
   // triggered on pageload
   sketch.preload = () => {
-    PressStartFont = sketch.loadFont('static/running-dino/assets/PressStart2P-Regular.ttf')
-    sprite = sketch.loadImage('static/running-dino/assets/sprite.png')
+    PressStartFont = sketch.loadFont('static/running-dino/assets/PressStart2P-Regular.ttf');
+    sprite = sketch.loadImage('static/running-dino/assets/sprite.png');
   }
 
   // triggered after preload
   sketch.setup = () => {
-    const canvas = sketch.createCanvas(1200, 300)
+    const canvas = sketch.createCanvas(1200, 300);
     canvas.parent("player");
-    STATE.groundY = sketch.height - config.sprites.ground.h / 2
-    sketch.noLoop()
+    STATE.groundY = sketch.height - config.sprites.ground.h / 2;
+    sketch.noLoop();
 
     canvas.mouseClicked(() => {
       if (STATE.gameOver) {
-        resetGame()
+        resetGame();
       }
     })
   }
 
   // triggered for every frame
   sketch.draw = () => {
-    sketch.background('#f7f7f7')
-    drawGround()
-    drawClouds()
-    drawDino()
-    drawCacti()
-    drawScore()
+    sketch.background('#f7f7f7');
+    drawGround();
+    drawClouds();
+    drawDino();
+    drawCacti();
+    drawScore();
+
+    if (!STATE.isRunning) {
+      displayStartingText();
+    }
 
     if (STATE.level > 3) {
-      drawBirds()
+      drawBirds();
     }
 
     if (STATE.dino && STATE.dino.hits([STATE.cacti[0], STATE.birds[0]])) {
-      STATE.gameOver = true
+      STATE.gameOver = true;
     }
 
     if (STATE.gameOver) {
-      endGame()
+      endGame();
     } else {
-      updateScore()
+      updateScore();
     }
   }
 
   sketch.keyPressed = () => {
     if (sketch.key === ' ' || sketch.key === 'w') {
       if (STATE.isRunning) {
-        STATE.dino.jump()
+        STATE.dino.jump();
       } else {
-        resetGame()
+        resetGame();
       }
     } else if (sketch.key === 's') {
       if (STATE.isRunning) {
-        STATE.dino.duck(true)
+        STATE.dino.duck(true);
       }
     }
   }
 
   sketch.keyReleased = () => {
     if (sketch.key === 's') {
-      STATE.dino.duck(false)
+      STATE.dino.duck(false);
     }
   }
 }
