@@ -5,15 +5,15 @@
 const VARIANTS = ['cactus', 'cactusDouble', 'cactusDoubleB', 'cactusTriple']
 
 class Cactus extends Actor {
-  constructor (canvasWidth, canvasHeight) {
-    super()
-
-    this.sprite = randItem(VARIANTS)
-    this.x = canvasWidth
-    this.y = canvasHeight - this.height - 2
+  constructor (canvasWidth, canvasHeight, myConfig) {
+    super();
+    this.sprite = randItem(VARIANTS);
+    this.x = canvasWidth;
+    this.y = canvasHeight - this.height - 2;
+    this.config = myConfig;
   }
 
   nextFrame () {
-    this.x -= config.settings.bgSpeed
+    this.x -= this.config.settings.bgSpeed;
   }
 }

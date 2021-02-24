@@ -1,8 +1,6 @@
-// import Actor from './Actor.js'
-// import config from '../config.js'
 
 class Dino extends Actor {
-  constructor (canvasHeight, unit=null) {
+  constructor (canvasHeight, myConfig, unit=null) {
     super();
 
     this.canvasHeight = canvasHeight;
@@ -13,6 +11,7 @@ class Dino extends Actor {
     this.velocity = 0;
     this.x = 25;
     this.relativeY = 0;
+    this.config = myConfig;
 
     this.unit = unit;
     this.isAlive = true;
@@ -24,13 +23,13 @@ class Dino extends Actor {
     // returns dino velocity, Y position of dino, distance to closest obstacle, y value of the closest obstacle
     if (nextObstacle) {
       let canDuck = 0 ;
-      if (nextObstacle instanceof Bird && nextObstacle.y < 238) {
+      if (nextObstacle instanceof Bird && nextObstacle.y < 23) {
         console.log("BIRD Y IS ", nextObstacle.y);
         canDuck = 100;
       }
-      return [window.config.settings.bgSpeed, this.relativeY, nextObstacle.x - this.x - 100, canDuck];
+      return [this.config.settings.bgSpeed, this.relativeY, nextObstacle.x - this.x - 100, canDuck];
     } else {
-      return [window.config.settings.bgSpeed, this.relativeY, 500, 0];
+      return [this.config.settings.bgSpeed, this.relativeY, 500, 0];
     }
   }
 
@@ -40,7 +39,7 @@ class Dino extends Actor {
 
   jump () {
     if (this.relativeY === 0) {
-      this.velocity = -config.settings.dinoLift;
+      this.velocity = -this.config.settings.dinoLift;
     }
   }
 
@@ -50,7 +49,7 @@ class Dino extends Actor {
 
   nextFrame () {
     // use gravity to gradually decrease velocity
-    this.velocity += config.settings.dinoGravity;
+    this.velocity += this.config.settings.dinoGravity;
     this.relativeY += this.velocity;
 
     // stop falling once back down to the ground
@@ -68,7 +67,7 @@ class Dino extends Actor {
       this.sprite = 'dino';
     } else {
       // on the ground running
-      if (this.legFrames >= config.settings.dinoLegsRate) {
+      if (this.legFrames >= this.config.settings.dinoLegsRate) {
         this.legShowing = this.legShowing === 'Left' ? 'Right' : 'Left';
         this.legFrames = 0;
       }

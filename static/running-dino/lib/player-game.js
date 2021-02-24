@@ -1,8 +1,9 @@
-
+var playerLocalConfig;
 
 var player_game_sketch = function(sketch)
 {
   window.config = config;
+  playerLocalConfig = JSON.parse(JSON.stringify(window.config));
 
   // for resetting settings that change due to
   // difficulty increasing
@@ -28,7 +29,7 @@ var player_game_sketch = function(sketch)
   window.state = STATE;
 
   function spriteImage (spriteName, ...clientCoords) {
-    const { h, w, x, y } = config.sprites[spriteName];
+    const { h, w, x, y } = playerLocalConfig.sprites[spriteName];
 
     // eslint-disable-next-line no-useless-call
     return sketch.image.apply(sketch, [sprite, ...clientCoords, w / 2, h / 2, x, y, w, h]);
@@ -41,19 +42,19 @@ var player_game_sketch = function(sketch)
     Object.assign(STATE, {
       birds: [],
       cacti: [],
-      dino: new Dino(sketch.height),
+      dino: new Dino(sketch.height, playerLocalConfig),
       gameOver: false,
       isRunning: true,
       level: 0,
       score: 0
     });
 
-    Object.assign(config.settings, SETTINGS_BACKUP);
+    Object.assign(playerLocalConfig, SETTINGS_BACKUP);
     sketch.loop();
   }
 
   function endGame () {
-    const iconSprite = config.sprites.replayIcon;
+    const iconSprite = playerLocalConfig.sprites.replayIcon;
     const padding = 15;
 
     sketch.fill('#535353');
@@ -68,7 +69,7 @@ var player_game_sketch = function(sketch)
   }
 
   function increaseDifficulty () {
-    const { settings } = config;
+    const { settings } = playerLocalConfig;
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
     const { level } = STATE;
 
@@ -84,7 +85,7 @@ var player_game_sketch = function(sketch)
   }
 
   function updateScore () {
-    if (sketch.frameCount % config.settings.scoreIncreaseRate === 0) {
+    if (sketch.frameCount % playerLocalConfig.settings.scoreIncreaseRate === 0) {
       const oldLevel = STATE.level;
 
       STATE.score++;
@@ -97,8 +98,8 @@ var player_game_sketch = function(sketch)
   }
 
   function drawGround () {
-    const { bgSpeed } = config.settings;
-    const groundImgWidth = config.sprites.ground.w / 2;
+    const { bgSpeed } = playerLocalConfig.settings;
+    const groundImgWidth = playerLocalConfig.sprites.ground.w / 2;
 
     spriteImage('ground', STATE.groundX, STATE.groundY);
     STATE.groundX -= bgSpeed;
@@ -128,7 +129,7 @@ var player_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.cloudSpawnRate === 0) {
+    if (sketch.frameCount % playerLocalConfig.settings.cloudSpawnRate === 0) {
       clouds.push(new Cloud(sketch.width));
     }
   }
@@ -140,7 +141,7 @@ var player_game_sketch = function(sketch)
       dino.nextFrame();
       spriteImage(dino.sprite, dino.x, dino.y);
     } else {
-      spriteImage('dino', 25, (sketch.height - (config.sprites.dino.h / 2) - 4));
+      spriteImage('dino', 25, (sketch.height - (playerLocalConfig.sprites.dino.h / 2) - 4));
     }
   }
 
@@ -160,24 +161,24 @@ var player_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
+    if (sketch.frameCount % playerLocalConfig.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (Math.random() < 2/3) {
         let canSpawn = true;
         for (const bird of STATE.birds) {
-          if (sketch.width - bird.x < config.settings.spawnBuffer) {
+          if (sketch.width - bird.x < playerLocalConfig.settings.spawnBuffer) {
             canSpawn = false;
             break;
           }
         }
         for (const c of cacti) {
-          if (sketch.width - c.x < config.settings.spawnBuffer / 2) {
+          if (sketch.width - c.x < playerLocalConfig.settings.spawnBuffer / 2) {
             canSpawn = false;
             break;
           }
         }
         if (canSpawn) {
-          cacti.push(new Cactus(sketch.width, sketch.height));
+          cacti.push(new Cactus(sketch.width, sketch.height, playerLocalConfig));
         }
       }
     }
@@ -215,18 +216,18 @@ var player_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.birdSpawnRate === 0) {
+    if (sketch.frameCount % playerLocalConfig.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
         let canSpawn = true;
         for (const cactus of STATE.cacti) {
-          if (sketch.width - cactus.x < config.settings.spawnBuffer) {
+          if (sketch.width - cactus.x < playerLocalConfig.settings.spawnBuffer) {
             canSpawn = false;
             break;
           }
         }
         if (canSpawn) {
-          birds.push(new Bird(sketch.width, sketch.height));
+          birds.push(new Bird(sketch.width, sketch.height, playerLocalConfig));
         }
       }
     }
@@ -265,7 +266,7 @@ var player_game_sketch = function(sketch)
   sketch.setup = () => {
     const canvas = sketch.createCanvas(1200, 300);
     canvas.parent("player");
-    STATE.groundY = sketch.height - config.sprites.ground.h / 2;
+    STATE.groundY = sketch.height - playerLocalConfig.sprites.ground.h / 2;
     sketch.noLoop();
 
     canvas.mouseClicked(() => {

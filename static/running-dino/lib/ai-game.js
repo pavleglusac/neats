@@ -1,7 +1,11 @@
 
+var aiLocalConfig;
+
 var ai_game_sketch = function(sketch)
 {
+  
   window.config = config;
+  aiLocalConfig = JSON.parse(JSON.stringify(window.config));
 
   const NUMBER_OF_DINOS = units.length;
   var playerCount = NUMBER_OF_DINOS;
@@ -33,7 +37,7 @@ var ai_game_sketch = function(sketch)
   window.state = STATE;
 
   function spriteImage (spriteName, ...clientCoords) {
-    const { h, w, x, y } = config.sprites[spriteName];
+    const { h, w, x, y } = aiLocalConfig.sprites[spriteName];
 
     // eslint-disable-next-line no-useless-call
     return sketch.image.apply(sketch, [sprite, ...clientCoords, w / 2, h / 2, x, y, w, h]);
@@ -84,12 +88,12 @@ var ai_game_sketch = function(sketch)
     bestDino = allDinos[NUMBER_OF_DINOS-1];
     best_unit = bestDino.unit;
 
-    Object.assign(config.settings, SETTINGS_BACKUP);
+    Object.assign(aiLocalConfig.settings, SETTINGS_BACKUP);
     sketch.loop();
   }
 
   function increaseDifficulty () {
-    const { settings } = config;
+    const { settings } = aiLocalConfig;
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
     const { level } = STATE;
 
@@ -103,7 +107,7 @@ var ai_game_sketch = function(sketch)
   }
 
   function updateScore () {
-    if (sketch.frameCount % config.settings.scoreIncreaseRate === 0) {
+    if (sketch.frameCount % aiLocalConfig.settings.scoreIncreaseRate === 0) {
       const oldLevel = STATE.level;
 
       STATE.score++;
@@ -116,8 +120,8 @@ var ai_game_sketch = function(sketch)
   }
 
   function drawGround () {
-    const { bgSpeed } = config.settings;
-    const groundImgWidth = config.sprites.ground.w / 2;
+    const { bgSpeed } = aiLocalConfig.settings;
+    const groundImgWidth = aiLocalConfig.sprites.ground.w / 2;
 
     spriteImage('ground', STATE.groundX, STATE.groundY);
     STATE.groundX -= bgSpeed;
@@ -148,7 +152,7 @@ var ai_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.cloudSpawnRate === 0) {
+    if (sketch.frameCount % aiLocalConfig.settings.cloudSpawnRate === 0) {
       clouds.push(new Cloud(sketch.width));
     }
   }
@@ -178,25 +182,25 @@ var ai_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
+    if (sketch.frameCount % aiLocalConfig.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
       if (Math.random() < 3/5) {
         let canSpawn = true;
         for (const bird of STATE.birds) {
-          if (sketch.width - bird.x < config.settings.spawnBuffer) {
+          if (sketch.width - bird.x < aiLocalConfig.settings.spawnBuffer) {
             canSpawn = false;
             break;
           }
         }
         for (const c of cacti) {
-          if (sketch.width - c.x < config.settings.spawnBuffer / 2) {
+          if (sketch.width - c.x < aiLocalConfig.settings.spawnBuffer / 2) {
             console.log("SKIPPED CACTUS SPAWN");
             canSpawn = false;
             break;
           }
         }
         if (canSpawn) {
-          cacti.push(new Cactus(sketch.width, sketch.height));
+          cacti.push(new Cactus(sketch.width, sketch.height, aiLocalConfig));
         }
       }
     }
@@ -245,18 +249,18 @@ var ai_game_sketch = function(sketch)
       }
     }
 
-    if (sketch.frameCount % config.settings.birdSpawnRate === 0) {
+    if (sketch.frameCount % aiLocalConfig.settings.birdSpawnRate === 0) {
       // randomly either do or don't add bird
       if (randBoolean()) {
         let canSpawn = true;
         for (const cactus of STATE.cacti) {
-          if (sketch.width - cactus.x < config.settings.spawnBuffer) {
+          if (sketch.width - cactus.x < aiLocalConfig.settings.spawnBuffer) {
             canSpawn = false;
             break;
           }
         }
         if (canSpawn) {
-          birds.push(new Bird(sketch.width, sketch.height));
+          birds.push(new Bird(sketch.width, sketch.height, aiLocalConfig));
         }
       }
     }
@@ -265,7 +269,7 @@ var ai_game_sketch = function(sketch)
   function startNextGeneration () {
     newDinos = [];
     for (var unit of units) {
-      newDinos.push(new Dino(sketch.height, unit));
+      newDinos.push(new Dino(sketch.height, aiLocalConfig, unit));
     }
     allDinos = newDinos;
   }
@@ -300,7 +304,7 @@ var ai_game_sketch = function(sketch)
     bestDino = allDinos[allDinos.length-1];
 
     canvas.parent("ai");
-    STATE.groundY = sketch.height - config.sprites.ground.h / 2;
+    STATE.groundY = sketch.height - aiLocalConfig.sprites.ground.h / 2;
     sketch.noLoop();
 
     canvas.mouseClicked(() => {

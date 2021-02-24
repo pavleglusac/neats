@@ -10,7 +10,7 @@ function generateYCoord (canvasHeight) {
 }
 
 class Bird extends Actor {
-  constructor (canvasWidth, canvasHeight) {
+  constructor (canvasWidth, canvasHeight, myConfig) {
     super()
 
     this.x = canvasWidth
@@ -18,10 +18,12 @@ class Bird extends Actor {
     this.wingFrames = 0
     this.wingDirection = 'Up'
     this.sprite = `bird${this.wingDirection}`
+
+    this.config = myConfig;
   }
 
   nextFrame () {
-    this.x -= config.settings.bgSpeed
+    this.x -= this.config.settings.bgSpeed
     // this.x -= config.settings.birdSpeed original speed
     this.determineSprite()
   }
@@ -29,7 +31,7 @@ class Bird extends Actor {
   determineSprite () {
     const oldHeight = this.height
 
-    if (this.wingFrames >= config.settings.birdWingsRate) {
+    if (this.wingFrames >= this.config.settings.birdWingsRate) {
       this.wingDirection = this.wingDirection === 'Up' ? 'Down' : 'Up'
       this.wingFrames = 0
     }
