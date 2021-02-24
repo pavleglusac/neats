@@ -27,13 +27,13 @@
         </div>
     </nav>
 
-    <table border="8" style="margin: 5%; border-collapse: collapse;">
+    <table border="2" style="margin: 2%; border-collapse: collapse;">
         <tr>
-            <td style="vertical-align:top"><div id = "ai" width=600 height=150 ></div></td>
+            <td style="vertical-align:top"><div id = "ai" width=600 height=300 ></div></td>
             <td rowspan="2" style="vertical-align:top"><div id = "network" width=150 height=710></div></td>
         </tr>
         <tr>
-            <td style="vertical-align:top"><div id = "player" width=600 height=150 ></div></td>
+            <td style="vertical-align:top"><div id = "player" width=600 height=300 ></div></td>
         </tr>
     </table>
 
@@ -41,7 +41,13 @@
     <script src="/code.jquery.com/jquery.js"></script>
   		<!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-          
+    <script>
+        window.addEventListener('keydown', function(e) {
+            if(e.keyCode == 32 && e.target == document.body) {
+                e.preventDefault();
+            }
+        });
+    </script>
     <script src = "static/running-dino/lib/dino-unit.js"></script>
     <script src = "static/running-dino/lib/player-game.js"></script>
     <script src = "static/running-dino/lib/ai-game.js"></script>
