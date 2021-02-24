@@ -24,7 +24,7 @@ class Dino extends Actor {
     // returns dino velocity, Y position of dino, distance to closest obstacle, y value of the closest obstacle
     if (nextObstacle) {
       let canDuck = 0 ;
-      if (nextObstacle instanceof Bird) {
+      if (nextObstacle instanceof Bird && nextObstacle.y < 238) {
         console.log("BIRD Y IS ", nextObstacle.y);
         canDuck = 100;
       }

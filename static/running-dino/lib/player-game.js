@@ -74,10 +74,9 @@ var player_game_sketch = function(sketch)
 
     if (level > 5 && level < 8) {
       settings.bgSpeed++;
-    } else if (level > 7) {
-      settings.bgSpeed = Math.ceil(bgSpeed * 1.02);
-      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.96);
-
+    } else if (level > 7 && level < 10) {
+      settings.bgSpeed = Math.ceil(bgSpeed * 1.01);
+      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.94);
       if (level > 7 && level % 2 === 0 && dinoLegsRate > 3) {
         settings.dinoLegsRate--;
       }
@@ -163,7 +162,7 @@ var player_game_sketch = function(sketch)
 
     if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
-      if (randBoolean()) {
+      if (Math.random() < 2/3) {
         let canSpawn = true;
         for (const bird of STATE.birds) {
           if (sketch.width - bird.x < config.settings.spawnBuffer) {
@@ -172,7 +171,7 @@ var player_game_sketch = function(sketch)
           }
         }
         for (const c of cacti) {
-          if (sketch.width - c.x < config.settings.spawnBuffer) {
+          if (sketch.width - c.x < config.settings.spawnBuffer / 2) {
             canSpawn = false;
             break;
           }
@@ -189,7 +188,16 @@ var player_game_sketch = function(sketch)
     sketch.textAlign(sketch.RIGHT);
     sketch.textFont(PressStartFont);
     sketch.textSize(12);
-    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize());
+    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize() + 2);
+  }
+  
+  function drawHighScore () {
+    sketch.push();
+    sketch.textAlign(sketch.LEFT);
+    sketch.fill(55, 55, 55);
+    sketch.textSize(12);
+    sketch.text("pb:" + STATE.highscore, 2, sketch.textSize() + 2);
+    sketch.pop();
   }
 
   function drawBirds () {
@@ -275,6 +283,7 @@ var player_game_sketch = function(sketch)
     drawDino();
     drawCacti();
     drawScore();
+    drawHighScore();
 
     if (!STATE.isRunning) {
       displayStartingText();

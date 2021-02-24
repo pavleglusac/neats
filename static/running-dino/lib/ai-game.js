@@ -93,12 +93,9 @@ var ai_game_sketch = function(sketch)
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
     const { level } = STATE;
 
-    if (level > 5 && level < 8) {
+    if (level > 5 && level < 9) {
       settings.bgSpeed++;
-    } else if (level > 7) {
-      settings.bgSpeed = Math.ceil(bgSpeed * 1.02);
-      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.96);
-
+      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.94);
       if (level > 7 && level % 2 === 0 && dinoLegsRate > 3) {
         settings.dinoLegsRate--;
       }
@@ -183,7 +180,7 @@ var ai_game_sketch = function(sketch)
 
     if (sketch.frameCount % config.settings.cactiSpawnRate === 0) {
       // randomly either do or don't add cactus
-      if (randBoolean()) {
+      if (Math.random() < 3/5) {
         let canSpawn = true;
         for (const bird of STATE.birds) {
           if (sketch.width - bird.x < config.settings.spawnBuffer) {
@@ -192,7 +189,8 @@ var ai_game_sketch = function(sketch)
           }
         }
         for (const c of cacti) {
-          if (sketch.width - c.x < config.settings.spawnBuffer) {
+          if (sketch.width - c.x < config.settings.spawnBuffer / 2) {
+            console.log("SKIPPED CACTUS SPAWN");
             canSpawn = false;
             break;
           }
@@ -209,7 +207,28 @@ var ai_game_sketch = function(sketch)
     sketch.textAlign(sketch.RIGHT);
     sketch.textFont(PressStartFont);
     sketch.textSize(12);
-    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize());
+    sketch.text((STATE.score + '').padStart(5, '0'), sketch.width, sketch.textSize() + 2);
+  }
+
+  function drawInfo() {
+    sketch.push();
+    sketch.textAlign(sketch.CENTER);
+    sketch.fill(55, 55, 55);
+    sketch.textSize(12);
+    sketch.text("generation " + generation, sketch.width / 2, sketch.textSize() + 20);
+    sketch.pop();
+
+    sketch.push();
+    sketch.textAlign(sketch.CENTER);
+    sketch.textSize(10);
+    sketch.text("left alive " + playerCount, sketch.width / 2, sketch.textSize() + 35);
+    sketch.pop();
+
+    sketch.push();
+    sketch.textAlign(sketch.LEFT);
+    sketch.textSize(12);
+    sketch.text("pb:" + STATE.highscore, 2, sketch.textSize() + 2);
+    sketch.pop();
   }
 
   function drawBirds () {
@@ -265,7 +284,6 @@ var ai_game_sketch = function(sketch)
     sketch.textSize(25);
     sketch.text("Click to start", sketch.width / 2, sketch.height / 2 + 30);
     sketch.pop();
-
   }
 
   // triggered on pageload
@@ -300,6 +318,7 @@ var ai_game_sketch = function(sketch)
     drawDinos();
     drawCacti();
     drawScore();
+    drawInfo();
 
     if (!STATE.isRunning) {
       displayStartingText();
