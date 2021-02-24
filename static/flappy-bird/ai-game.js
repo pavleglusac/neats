@@ -171,7 +171,7 @@ var ai_game_sketch = function(sketch)
             if (pipes.length > 0) {
                 var reference;
                 for (var pipe of pipes) {
-                    if (pipe.x + sprite_pipe.width * image_scaling/2 > this.x) {
+                    if (pipe.x - sprite_pipe.width * image_scaling/2 > 5) {
                         reference = pipe;
                         break;
                     }
@@ -179,7 +179,7 @@ var ai_game_sketch = function(sketch)
                 this.h_distance_to_pipe_left = this.x + this.sprite_bird.width * image_scaling / 2 - (reference.x - sprite_pipe.width * image_scaling / 2);
                 this.h_distance_to_pipe_right = this.x - this.sprite_bird.width * image_scaling / 2 - (reference.x + sprite_pipe.width * image_scaling / 2);
                 this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
-                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 -(reference.y + reference.gapSize);
+                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 - (reference.y + reference.gapSize);
             }
             // console.log(this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe);
         }
