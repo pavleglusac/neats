@@ -453,15 +453,15 @@ var player_game_sketch = function(sketch)
 
             //Pipes collisions
             if ((
-                (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 10 && flappy_bird.x - sprite_bird.width * image_scaling / 2  < this.x + sprite_bird.width * image_scaling / 2 + 10) &&
-                (flappy_bird.y + sprite_bird.height * image_scaling + 15 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling - 15 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
+                (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 12 && flappy_bird.x - sprite_bird.width * image_scaling / 2  < this.x + sprite_bird.width * image_scaling / 2 + 12) &&
+                (flappy_bird.y + sprite_bird.height * image_scaling + 12 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling - 12 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
             )
 
                 ||
 
                 (
-                    (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 10 && flappy_bird.x - 20 < this.x + sprite_bird.width * image_scaling / 2 + 10) &&
-                    (flappy_bird.y + sprite_bird.height * image_scaling + 15 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling - 15 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
+                    (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 10 && flappy_bird.x - 17 < this.x + sprite_bird.width * image_scaling / 2 + 10) &&
+                    (flappy_bird.y + sprite_bird.height * image_scaling + 12 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling - 12 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
                 )
 
             ) {

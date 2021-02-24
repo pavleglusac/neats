@@ -171,7 +171,7 @@ var ai_game_sketch = function(sketch)
             if (pipes.length > 0) {
                 var reference;
                 for (var pipe of pipes) {
-                    if (pipe.x - sprite_pipe.width * image_scaling/2 > 5) {
+                    if (pipe.x - sprite_pipe.width * image_scaling/2 > 0) {
                         reference = pipe;
                         break;
                     }
@@ -404,7 +404,7 @@ var ai_game_sketch = function(sketch)
             sketch.strokeWeight(3);
             sketch.fill(255);
             sketch.textSize(26);
-            sketch.text("Birds left: " + player_count, sketch.width / 2, sketch.height - 25);
+            sketch.text("left alive: " + player_count, sketch.width / 2, sketch.height - 25);
             sketch.pop();
             sketch.redraw();
         }
@@ -524,15 +524,15 @@ var ai_game_sketch = function(sketch)
                 bird = all_birds[i];
                 
                 if ((
-                    (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 15 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 15) &&
-                    (bird.y + bird.sprite_bird.height * image_scaling + 15 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling -15 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
+                    (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 12 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 12) &&
+                    (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling -12 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
                 )
     
                     ||
     
                     (
-                        (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 5 && bird.x - 20 < this.x + bird.sprite_bird.width * image_scaling / 2 + 5) &&
-                        (bird.y + bird.sprite_bird.height * image_scaling + 15 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling - 15 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
+                        (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 5 && bird.x - 17 < this.x + bird.sprite_bird.width * image_scaling / 2 + 5) &&
+                        (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling - 12 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
                     )
     
                 ) {
