@@ -6,7 +6,7 @@ function generateYCoord (canvasHeight) {
   const maxBirdHeight = Math.max(config.sprites.birdUp.h, config.sprites.birdDown.h) / 2
   const padding = 10
 
-  return randInteger(200, canvasHeight - maxBirdHeight - padding)
+  return randInteger(220, canvasHeight - maxBirdHeight - padding)
 }
 
 class Bird extends Actor {

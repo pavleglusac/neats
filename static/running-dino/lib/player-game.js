@@ -73,11 +73,10 @@ var player_game_sketch = function(sketch)
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
     const { level } = STATE;
 
-    if (level > 5 && level < 8) {
+    if (level > 5 && level < 12) {  // level > 5 && level < 9 works
       settings.bgSpeed++;
-    } else if (level > 7 && level < 10) {
-      settings.bgSpeed = Math.ceil(bgSpeed * 1.01);
-      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.94);
+      settings.cactiSpawnRate--;
+      // settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.99); // 0.92 works
       if (level > 7 && level % 2 === 0 && dinoLegsRate > 3) {
         settings.dinoLegsRate--;
       }

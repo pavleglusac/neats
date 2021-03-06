@@ -1,7 +1,6 @@
 var units_data = null;
 var units = [];
 let netCanvas;
-
 var best_unit = null;
 
 /*$(document).ready(function(){
@@ -74,7 +73,7 @@ var network_sketch = function(sketch)
         findBest = (arr) => {
             return arr.reduce( (p, v) => { return ( p.score > v.score ? p : v ) } );
         };
-        if (!best_unit) {
+        if (best_unit === null) {
             best_unit = findBest(units);
         }
         sketch.background('#293241');
@@ -110,26 +109,28 @@ var network_sketch = function(sketch)
             mapka[nodes[i].id] = [x, y];
         }
         var cons = best_unit.connections;
-        sketch.stroke(0);
-        sketch.strokeWeight(4);
-        for(var [key, value] of Object.entries(cons))
-        {
-            for(item of value)
+        if (Object.keys(cons).length > 0 && Object.keys(cons)[0] !== "") {
+            sketch.stroke(0);
+            sketch.strokeWeight(4);
+            for(var [key, value] of Object.entries(cons))
             {
-                var from_x = mapka[key][0];
-                var from_y = mapka[key][1];
-                var to = item.to;
-                var to_x = mapka[to][0];
-                var to_y = mapka[to][1];
-                sketch.push()
-                sketch.strokeWeight(Math.abs(10*item.weight));
-                if(item.weight > 0)
-                    sketch.stroke('#ee6c4d');
-                else
-                    sketch.stroke('#3d5a80');
-                sketch.line(from_x, from_y, to_x, to_y);
-
-                sketch.pop();
+                for(item of value)
+                {
+                    var from_x = mapka[key][0];
+                    var from_y = mapka[key][1];
+                    var to = item.to;
+                    var to_x = mapka[to][0];
+                    var to_y = mapka[to][1];
+                    sketch.push()
+                    sketch.strokeWeight(Math.abs(10*item.weight));
+                    if(item.weight > 0)
+                        sketch.stroke('#ee6c4d');
+                    else
+                        sketch.stroke('#3d5a80');
+                    sketch.line(from_x, from_y, to_x, to_y);
+    
+                    sketch.pop();
+                }
             }
         }
 

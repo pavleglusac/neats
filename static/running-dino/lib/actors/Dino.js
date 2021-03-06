@@ -27,7 +27,7 @@ class Dino extends Actor {
         console.log("BIRD Y IS ", nextObstacle.y);
         canDuck = 100;
       }
-      return [this.config.settings.bgSpeed, this.relativeY, nextObstacle.x - this.x - 100, canDuck];
+      return [this.config.settings.bgSpeed, this.relativeY, nextObstacle.x - this.x - 125, canDuck];
     } else {
       return [this.config.settings.bgSpeed, this.relativeY, 500, 0];
     }

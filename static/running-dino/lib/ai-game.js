@@ -49,13 +49,13 @@ var ai_game_sketch = function(sketch)
     let closest = STATE.cacti ? STATE.cacti[0] : null;
     let closestx = closest ? closest.x : 1000;
     for (bird of STATE.birds) {
-      if (bird.x < closestx && bird.x > bestDino.x) {
+      if (bird.x < closestx && bird.x > bestDino.x - 10) {
         closest = bird;
         break;
       }
     }
     for (cactus of STATE.cacti) {
-      if (cactus.x < closestx && cactus.x > bestDino.x) {
+      if (cactus.x < closestx && cactus.x > bestDino.x - 10) {
         closest = cactus;
         break;
       }
@@ -85,8 +85,9 @@ var ai_game_sketch = function(sketch)
     });
 
     playerCount = NUMBER_OF_DINOS;
-    bestDino = allDinos[NUMBER_OF_DINOS-1];
-    best_unit = bestDino.unit;
+    setBestDino();
+    // bestDino = allDinos[NUMBER_OF_DINOS-1];
+    // best_unit = bestDino.unit;
 
     Object.assign(aiLocalConfig.settings, SETTINGS_BACKUP);
     sketch.loop();
@@ -97,9 +98,10 @@ var ai_game_sketch = function(sketch)
     const { bgSpeed, cactiSpawnRate, dinoLegsRate } = settings;
     const { level } = STATE;
 
-    if (level > 5 && level < 9) {
+    if (level > 5 && level < 12) {  // level > 5 && level < 9 works
       settings.bgSpeed++;
-      settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.94);
+      settings.cactiSpawnRate--;
+      // settings.cactiSpawnRate = Math.floor(cactiSpawnRate * 0.99); // 0.92 works
       if (level > 7 && level % 2 === 0 && dinoLegsRate > 3) {
         settings.dinoLegsRate--;
       }
@@ -274,6 +276,28 @@ var ai_game_sketch = function(sketch)
     allDinos = newDinos;
   }
 
+  function setBestDino() {
+    let candidate = null;
+    let changed = true;
+    for (var i = allDinos.length-1; i >= 0; i--) {
+        if (allDinos[i].isAlive) {
+          bestDino = allDinos[i];
+          let cons = bestDino.unit.connections;
+          if (Object.keys(cons).length > 0 && Object.keys(cons)[0] !== "") {
+            best_unit = bestDino.unit;
+            changed = true;
+            break;
+          } else {
+            candidate = bestDino;
+          }
+        }
+    }
+    if (!changed) {
+      bestDino = candidate;
+      best_unit = bestDino.unit;
+    } 
+  }
+
   function displayStartingText() {
     sketch.push();  
     sketch.textAlign(sketch.CENTER);
@@ -301,7 +325,6 @@ var ai_game_sketch = function(sketch)
     const canvas = sketch.createCanvas(1200, 300);
 
     startNextGeneration();
-    bestDino = allDinos[allDinos.length-1];
 
     canvas.parent("ai");
     STATE.groundY = sketch.height - aiLocalConfig.sprites.ground.h / 2;
@@ -352,14 +375,9 @@ var ai_game_sketch = function(sketch)
       }
     }
 
-    if (!bestDino.isAlive) {
-      for (var i = allDinos.length-1; i >= 0; i--) {
-          if (allDinos[i].isAlive) {
-            bestDino = allDinos[i];
-            best_unit = bestDino.unit;
-            break;
-          }
-      }
+    
+    if (bestDino && !bestDino.isAlive) {
+      setBestDino();
     }
     
     if (playerCount <= 0) {
