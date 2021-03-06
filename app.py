@@ -46,13 +46,6 @@ def running_dinosaur():
         neat = niit.Neat(4, 3, 100)
         f = app.open_resource("static/running-dino/running_dino_settings.txt", "r")
         neat.load_settings(f)
-        # for unit in neat.get_units():
-        #     unit.get_genome().mutate_connection()
-        #     unit.get_genome().mutate_connection()
-        #     unit.get_genome().mutate_connection()
-        #     unit.get_genome().mutate_connection()
-        #     unit.get_genome().mutate_connection()
-        #     unit.get_genome().mutate()
         data = encoder.encode(neat.units)
         return data
     return render_template("/running-dino.html")
