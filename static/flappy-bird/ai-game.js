@@ -40,7 +40,7 @@ var ai_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 85;
+    var gap = 87;
 
     var overflowX = 0;
 
@@ -702,42 +702,7 @@ var ai_game_sketch = function(sketch)
     function smoothMove(pos, target, speed) {
         return pos + (target - pos) * speed;
     }
-
-    // js utility
-
-    /*
-    function preventDefault(e) {
-    e = e || window.event;
-    if (e.preventDefault)
-        e.preventDefault();
-    e.returnValue = false;  
-    }
-
-    function preventDefaultForScrollKeys(e) {
-        if (keys[e.keyCode]) {
-            preventDefault(e);
-            return false;
-        }
-    }
-
-    function disableScroll() {
-    if (window.addEventListener) // older FF
-        window.addEventListener('DOMMouseScroll', preventDefault, false);
-    window.onwheel = preventDefault; // modern standard
-    window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-    window.ontouchmove  = preventDefault; // mobile
-    document.onkeydown  = preventDefaultForScrollKeys;
-    }
-
-    function enableScroll() {
-        if (window.removeEventListener)
-            window.removeEventListener('DOMMouseScroll', preventDefault, false);
-        window.onmousewheel = document.onmousewheel = null; 
-        window.onwheel = null; 
-        window.ontouchmove = null;  
-        document.onkeydown = null;  
-    }*/
-
+    
     function mobile() {
         if (navigator.userAgent.match(/Android/i)
             || navigator.userAgent.match(/webOS/i)

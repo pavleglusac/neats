@@ -45,7 +45,7 @@ var player_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 85;
+    var gap = 87;
 
     var gameover = false;
     var page = "MENU";
