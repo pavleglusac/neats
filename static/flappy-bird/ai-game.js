@@ -181,13 +181,11 @@ var ai_game_sketch = function(sketch)
                 this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
                 this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 - (reference.y + reference.gapSize);
             }
-            // console.log(this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe);
         }
 
         inputs() {
             this.look();
             return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY];
-            //return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY]
         }
 
         kinematicMove() {
@@ -302,6 +300,7 @@ var ai_game_sketch = function(sketch)
         // if (generation > 1) { call neat.evolve() }
         new_birds = [];
         for (var unit of units) {
+            unit.score = 0;
             new_birds.push(new Bird(unit));
         }
         all_birds = new_birds;
@@ -468,7 +467,6 @@ var ai_game_sketch = function(sketch)
             best_unit = best_bird.bird_unit;
             
             for (i of Array(all_birds.length).keys()) {
-                console.log(i);
                 all_birds[i].velocityY = 0;
                 all_birds[i].fly = true;
                 all_birds[i].target = clamp(this.y - 60, -19, sketch.height);
@@ -515,13 +513,12 @@ var ai_game_sketch = function(sketch)
                     this.potential = false;
                     for (var b of all_birds) {
                         if (b.is_alive) {
-                            b.bird_unit.score += score;
+                            b.bird_unit.score += 10 * score;
                         }
                     }
                 }
             }
-            for (i of Array(all_birds.length).keys()) {
-                bird = all_birds[i];
+            for (let bird of all_birds) {
                 
                 if ((
                     (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 12 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 12) &&
@@ -539,6 +536,7 @@ var ai_game_sketch = function(sketch)
                     if (bird.is_alive) {
                         player_count--;
                         bird.is_alive = false;
+                        bird.bird_unit.score -= Math.floor(0.6 * (Math.abs(bird.y - this.y))); // distance from opening, works without this
                     }
                 }
             }
@@ -581,8 +579,7 @@ var ai_game_sketch = function(sketch)
         player_count = NUMBER_OF_BIRDS;
 
         start_next_generation();
-        for (i of Array(all_birds.length).keys()) {
-            bird = all_birds[i];
+        for (let bird of all_birds) {
             bird.y = sketch.height / 2
             bird.is_alive = true;
             bird.velocityY = 0;

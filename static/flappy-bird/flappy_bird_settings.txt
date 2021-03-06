@@ -1,5 +1,5 @@
 species_threshold = 4
-death_row = 0.8
+death_row = 0.85
 weight_shift_strength = 0.3
 weight_random_strength = 1
 mutate_weight_shift_probability = 0.05
