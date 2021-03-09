@@ -7,6 +7,7 @@ class Unit(object):
         self.genome = genome
         self.score = 0
         self.species = None
+        self.id = None
 
     def get_genome(self):
         return self.genome
@@ -25,6 +26,12 @@ class Unit(object):
 
     def set_species(self, sp):
         self.species = sp
+
+    def get_id():
+        return self.id
+    
+    def set_id(self, id):
+        self.id = id
 
     def distance(self, other):
         return self.genome.distance(other)

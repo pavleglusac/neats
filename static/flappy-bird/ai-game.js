@@ -3,6 +3,8 @@ var ai_game_sketch = function(sketch)
 {
     var c;
 
+    const NUMBER_OF_BIRDS = units.length;
+
     var sprite_red_bird_downflap;
     var sprite_red_bird_midflap;
     var sprite_red_bird_upflap;
@@ -16,13 +18,6 @@ var ai_game_sketch = function(sketch)
     var sprite_pipe;
     var sprite_city;
     var sprite_floor;
-    var sprite_title;
-
-    var sound_point;
-    var sound_wing;
-    var sound_hit;
-    var sound_die;
-    var sound_sweetwing;
 
     var font_flappy;
 
@@ -36,7 +31,7 @@ var ai_game_sketch = function(sketch)
 
     var pipes = [];
 
-    //GAME VARS
+    // GAME VARS
     var fixed_width = 400;
     var fixed_height = 710;
 
@@ -45,20 +40,27 @@ var ai_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 80;
-
-    var gameover = false;
-    var page = "MENU";
+    var gap = 87;
 
     var overflowX = 0;
 
-    var startgame = false;
+    // GAME FLOW
+    var gameover = false;
+    var page = "MENU";
 
-    var bird_index = 1;
-    var sprite_bird;
+    var startgame = false;
+    var all_dead = true;
+
+    // NEAT VARS
+    var player_count = units.length;
+
+    var generation = 1;
+    var all_birds = [];
+
+    var best_bird = null;
 
     class Bird{
-        constructor()
+        constructor(unit=null, frames=blue_bird_frames)
         {
             this.x = 100;
             this.y = 0;
@@ -70,22 +72,34 @@ var ai_game_sketch = function(sketch)
             this.flashAnim = 0;
             this.flashReturn =  false;
             this.kinematicAnim = 0;
-            this.bird_unit = null;
+
+            this.is_alive = true;
+            this.points = 0;
+            
+            this.h_distance_to_pipe_left = 0;
+            this.h_distance_to_pipe_right = 0;
+            this.v_distance_to_top_pipe = 0;
+            this.v_distance_to_bottom_pipe = 0;
+
+            this.bird_index = 1;
+            this.frames = frames;
+            this.sprite_bird = this.frames[this.bird_index];
+            this.bird_unit = unit;
         }
 
         display() {
-            sprite_bird = blue_bird_frames[bird_index];
-            if (!flappy_bird.falls) {
+            this.sprite_bird = this.frames[this.bird_index];
+            if (this.is_alive) {
                 if (parseInt(sketch.frameCount) % 10 === 0) {
-                    bird_index += 1;
-                    bird_index %= 3;
+                    this.bird_index += 1;
+                    this.bird_index %= 3;
                 }
             }
-            if ((!mousePress) || this.falls) {
+            if ((!mousePress) || !this.is_alive) {
                 sketch.push();
                 sketch.translate(this.x, this.y);
                 sketch.rotate(sketch.radians(this.angle));
-                sketch.image(sprite_bird, 0, 0, sprite_bird.width * image_scaling, sprite_bird.height * image_scaling);
+                sketch.image(this.sprite_bird, 0, 0, this.sprite_bird.width * image_scaling, this.sprite_bird.height * image_scaling);
                 sketch.pop();
                 sketch.redraw();
             }
@@ -93,7 +107,7 @@ var ai_game_sketch = function(sketch)
                 sketch.push();
                 sketch.translate(this.x, this.y);
                 sketch.rotate(sketch.radians(this.angle));
-                sketch.image(sprite_bird, 0, 0, sprite_bird.width * image_scaling, sprite_bird.height * image_scaling);
+                sketch.image(this.sprite_bird, 0, 0, this.sprite_bird.width * image_scaling, this.sprite_bird.height * image_scaling);
                 sketch.pop();
                 sketch.redraw();
             }
@@ -101,26 +115,7 @@ var ai_game_sketch = function(sketch)
         }
 
         update() {
-            if (this.falls) {
-                if (this.flashAnim > 255) {
-                    this.flashReturn = true;
-                }
-
-                if (this.flashReturn) {
-                    this.flashAnim -= 60;
-                }
-                else {
-                    this.flashAnim += 60;
-                }
-
-                if (this.flashReturn && this.flashAnim === 0) {
-                    gameover = true;
-                    menu_gameover.easein();
-                    try { sound_die.play(); } catch (e) { }
-
-                    if (score > highscore) { highscore = score; }
-                }
-
+            if (!this.is_alive) {
                 this.y += this.velocityY;
                 this.velocityY += gravity;
                 this.angle += 4;
@@ -140,10 +135,8 @@ var ai_game_sketch = function(sketch)
                 if (this.angle > 90) {
                     this.angle = 90;
                 }
-
-                if (mousePressEvent || (keyPressEvent && key == ' ')) {
-                    try { sound_wing.play(); } catch (e) { }
-
+                var network_output = this.bird_unit.calculate(this.inputs());
+                if (network_output[0] > network_output[1]) {
                     this.velocityY = 0;
                     this.fly = true;
                     this.target = clamp(this.y - 60, -19, sketch.height);
@@ -165,13 +158,34 @@ var ai_game_sketch = function(sketch)
                     this.y -= 3;
                 }
 
-                if (this.y > sketch.height - sprite_floor.height * image_scaling/2 - 12) {
-                    if (!flappy_bird.falls) { try { sound_hit.play(); } catch (e) { } }
-                    this.falls = true;
+                if (this.y > sketch.height - sprite_floor.height * image_scaling/2 - 12 && this.is_alive) {
+                    this.is_alive = false;
+                    player_count--;
                 }
             }
             this.y = clamp(this.y, -20, sketch.height - 50);
             sketch.redraw();
+        }
+
+        look() {
+            if (pipes.length > 0) {
+                var reference;
+                for (var pipe of pipes) {
+                    if (pipe.x - sprite_pipe.width * image_scaling/2 > 0) {
+                        reference = pipe;
+                        break;
+                    }
+                }
+                this.h_distance_to_pipe_left = this.x + this.sprite_bird.width * image_scaling / 2 - (reference.x - sprite_pipe.width * image_scaling / 2);
+                this.h_distance_to_pipe_right = this.x - this.sprite_bird.width * image_scaling / 2 - (reference.x + sprite_pipe.width * image_scaling / 2);
+                this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
+                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 - (reference.y + reference.gapSize);
+            }
+        }
+
+        inputs() {
+            this.look();
+            return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY];
         }
 
         kinematicMove() {
@@ -181,28 +195,24 @@ var ai_game_sketch = function(sketch)
 
                 gameover = false;
                 score = 0;
-                gap = 90;
             }
             this.y = sketch.height / 2 + sketch.map(sketch.sin(sketch.frameCount * 0.1), 0, 1, -2, 2);
 
-            sprite_bird = blue_bird_frames[bird_index];
-            if (!flappy_bird.falls) {
+            this.sprite_bird = this.frames[this.bird_index];
+            if (this.is_alive) {
                 if (parseInt(sketch.frameCount) % 10 === 0) {
-                    bird_index += 1;
-                    bird_index %= 3;
+                    this.bird_index += 1;
+                    this.bird_index %= 3;
                 }
             }
 
             sketch.push();
             sketch.translate(this.x, this.y);
-            sketch.image(sprite_bird, 0, 0, sprite_bird.width * image_scaling, sprite_bird.height * image_scaling);
+            sketch.image(this.sprite_bird, 0, 0, this.sprite_bird.width * image_scaling, this.sprite_bird.height * image_scaling);
             sketch.pop();
             sketch.redraw();
         }
-
     }
-    
-    var flappy_bird = new Bird();
 
     sketch.setup = function() {
         if (mobile()) {
@@ -214,6 +224,9 @@ var ai_game_sketch = function(sketch)
             c.parent("ai");
         }
 
+        c.mousePressed(mPress);
+        c.mouseReleased(mRelease);
+        
         console.log("Hey dude I'm here");
         sketch.imageMode(sketch.CENTER);
         sketch.rectMode(sketch.CENTER);
@@ -237,7 +250,12 @@ var ai_game_sketch = function(sketch)
         blue_bird_frames.push(sprite_blue_bird_downflap);
         blue_bird_frames.push(sprite_blue_bird_midflap);
         blue_bird_frames.push(sprite_blue_bird_upflap);
-        sprite_bird = blue_bird_frames[bird_index];
+        
+        start_next_generation();
+        for(i of Array(all_birds.length).keys()) {
+            all_birds[i].y = sketch.height / 2;
+        }
+        best_unit = all_birds[0].bird_unit;
 
         sprite_pipe = sketch.loadImage('static/flappy-bird/assets/pipe-green.png');
         sprite_city = sketch.loadImage('static/flappy-bird/assets/background-day-ns.png');
@@ -245,16 +263,9 @@ var ai_game_sketch = function(sketch)
         sprite_title = sketch.loadImage('static/flappy-bird/assets/title.png');
         sprite_game_over = sketch.loadImage('static/flappy-bird/assets/gameover.png');
 
-        sound_point = sketch.loadSound('static/flappy-bird/sound/point.wav');
-        sound_hit = sketch.loadSound('static/flappy-bird/sound/hit.wav');
-        sound_die = sketch.loadSound('static/flappy-bird/sound/die.wav');
-        //sound_wing = loadSound('http://flappybird.netlify.com/data/Assets/sound/sfx_wing.wav');
-        sound_wing = sketch.loadSound('static/flappy-bird/sound/wing.wav');
-        sound_sweetwing = sketch.loadSound('static/flappy-bird/sound/swoosh.wav');
-
         font_flappy = sketch.loadFont('static/flappy-bird/font/04B_19.TTF');
 
-        flappy_bird.y = sketch.height / 2;
+        // * POINT 0001
 
         try { sketch.textFont(font_flappy); } catch (e) { }
 
@@ -284,9 +295,30 @@ var ai_game_sketch = function(sketch)
         sketch.redraw();
     }
 
+    function start_next_generation() {
+        console.log(">>> GENERATION: ", generation, " <<<");
+        // if (generation > 1) { call neat.evolve() }
+        new_birds = [];
+        for (var unit of units) {
+            unit.score = 0;
+            new_birds.push(new Bird(unit));
+        }
+        all_birds = new_birds;
+    }
+
+    //EVENT
+    function mPress() {
+        mousePress = true;
+        mousePressEvent = true;
+    }
+    function mRelease(){
+        mousePress = false;
+        mouseReleaseEvent = true;
+    }
 
     //PAGES
     function page_game() {
+        all_dead = true;
         overflowX += speed;
         if (overflowX > sprite_city.width / image_scaling) {
             overflowX = 0;
@@ -296,10 +328,8 @@ var ai_game_sketch = function(sketch)
         sketch.image(sprite_city, sprite_city.width/image_scaling, sprite_city.height/image_scaling, sprite_city.width * image_scaling, sprite_city.height * image_scaling);
 
         //creator
-        if (!flappy_bird.falls) {
-            if (parseInt(sketch.frameCount) % 66 === 0) {
-                pipes.push(new Pipe());
-            }
+        if (parseInt(sketch.frameCount) % 66 === 0) {
+            pipes.push(new Pipe());
         }
 
         for (var i = 0; i < pipes.length; i++) {
@@ -317,11 +347,35 @@ var ai_game_sketch = function(sketch)
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling * 2 - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
 
-        flappy_bird.display();
-        flappy_bird.update();
-        flappy_bird.x = smoothMove(flappy_bird.x, 90, 0.02);
+        for (i of Array(all_birds.length).keys()) {
+            if (all_birds[i].is_alive) {
+                all_dead = false;
+                all_birds[i].display();
+                all_birds[i].update();
+                all_birds[i].x = smoothMove(all_birds[i].x, 90, 0.02);
+            }
+        }
+
         sketch.redraw();
-        //Score
+        
+        if (all_dead) {
+            generation++;
+            send_data();
+            resetGame();
+        }
+
+        if (!best_bird.is_alive) {
+            for (var i = all_birds.length-1; i >= 0; i--) {
+                if (all_birds[i].is_alive) {
+                    best_bird = all_birds[i];
+                    best_bird.frames = red_bird_frames;
+                    best_unit = best_bird.bird_unit;
+                    break;
+                }
+            }
+        }
+        
+        // Score
         if (!gameover) {
             sketch.push();
             sketch.stroke(0);
@@ -332,10 +386,33 @@ var ai_game_sketch = function(sketch)
             sketch.pop();
             sketch.redraw();
         }
+
+        // Generation
+        if (!gameover) {
+            sketch.push();
+            sketch.stroke(0);
+            sketch.strokeWeight(3);
+            sketch.fill(255);
+            sketch.textSize(26);
+            sketch.text("Generation: " + generation, sketch.width / 2, sketch.height - 50);
+            sketch.pop();
+            sketch.redraw();
+
+            sketch.push();
+            sketch.stroke(0);
+            sketch.strokeWeight(3);
+            sketch.fill(255);
+            sketch.textSize(26);
+            sketch.text("left alive: " + player_count, sketch.width / 2, sketch.height - 25);
+            sketch.pop();
+            sketch.redraw();
+        }
         
         sketch.push();
         sketch.noStroke();
-        sketch.fill(255, flappy_bird.flashAnim);
+        for (i of Array(all_birds.length).keys()) {
+            sketch.fill(255, all_birds[i].flashAnim);
+        }
         sketch.rect(sketch.width / 2, sketch.height / 2, sketch.width, sketch.height);
         sketch.pop();
         sketch.redraw();
@@ -346,6 +423,7 @@ var ai_game_sketch = function(sketch)
         sketch.redraw();
     }
 
+    placeholder_bird = new Bird();
     function page_menu() {
         overflowX += speed;
         if (overflowX > sprite_city.width / image_scaling) {
@@ -368,9 +446,9 @@ var ai_game_sketch = function(sketch)
         sketch.textSize(50);
         sketch.text("AI's bird", sketch.width / 2, sketch.height /  2 - 150);
         sketch.pop();
-
-
-        flappy_bird.kinematicMove();
+        
+        
+        placeholder_bird.kinematicMove();
 
         sketch.push();
         sketch.fill(230, 97, 29);
@@ -380,19 +458,25 @@ var ai_game_sketch = function(sketch)
         sketch.text('Tap to run', sketch.width / 2, sketch.height / 2 - 90);
         sketch.pop();
         sketch.redraw();
-
+        
         if (mousePressEvent || (keyPressEvent && key == ' ')) {
             page = "GAME";
             resetGame();
-
-            flappy_bird.velocityY = 0;
-            flappy_bird.fly = true;
-            flappy_bird.target = clamp(this.y - 60, -19, sketch.height);
-            flappy_bird.angle = -45;
-            flappy_bird.update();
+            best_bird = all_birds[all_birds.length - 1];
+            best_bird.frames = red_bird_frames;
+            best_unit = best_bird.bird_unit;
+            
+            for (i of Array(all_birds.length).keys()) {
+                all_birds[i].velocityY = 0;
+                all_birds[i].fly = true;
+                all_birds[i].target = clamp(this.y - 60, -19, sketch.height);
+                all_birds[i].angle = -45;
+                all_birds[i].update();
+            }
             sketch.redraw();
         }
-        flappy_bird.x = sketch.width / 2;
+
+        placeholder_bird.x = sketch.width / 2;
         sketch.redraw();
     }
 
@@ -419,38 +503,60 @@ var ai_game_sketch = function(sketch)
             sketch.image(sprite_pipe, 0, 0, sprite_pipe.width * image_scaling, sprite_pipe.height * image_scaling);
             sketch.pop();
             //Score
-            if (this.potential && (flappy_bird.x > this.x - sprite_bird.width * image_scaling / 2 - 5 && flappy_bird.x < this.x + sprite_bird.width * image_scaling / 2 + 5)) {
-                score++;
-                try { sound_point.play(); } catch (e) { }
-
-                if (gap > 60) { gap--; }
-
-                this.potential = false;
-            }
+            
 
             //Pipes collisions
-            if ((
-                (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 5 && flappy_bird.x - sprite_bird.width * image_scaling / 2  < this.x + sprite_bird.width * image_scaling / 2 + 5) &&
-                (flappy_bird.y + sprite_bird.height * image_scaling + 5 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
-            )
-
-                ||
-
-                (
-                    (flappy_bird.x + sprite_bird.width * image_scaling / 2 > this.x - sprite_bird.width * image_scaling / 2 - 5 && flappy_bird.x - 20 < this.x + sprite_bird.width * image_scaling / 2 + 5) &&
-                    (flappy_bird.y + sprite_bird.height * image_scaling > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && flappy_bird.y - sprite_bird.height * image_scaling - 5 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
-                )
-
-            ) {
-
-                if (!flappy_bird.falls) { try { sound_hit.play(); } catch (e) { } }
-                flappy_bird.falls = true;
+            var random_bird = get_random_alive_bird();
+            if (random_bird) {
+                if (this.potential && (random_bird.x > this.x - random_bird.sprite_bird.width * image_scaling / 2 - 10 && random_bird.x < this.x + random_bird.sprite_bird.width * image_scaling / 2 + 10)) {
+                    score++;
+                    this.potential = false;
+                    for (var b of all_birds) {
+                        if (b.is_alive) {
+                            b.bird_unit.score += 10 * score;
+                        }
+                    }
+                }
             }
+            for (let bird of all_birds) {
+                
+                if ((
+                    (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 12 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 12) &&
+                    (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling -12 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
+                )
+    
+                    ||
+    
+                    (
+                        (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 5 && bird.x - 17 < this.x + bird.sprite_bird.width * image_scaling / 2 + 5) &&
+                        (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling - 12 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
+                    )
+    
+                ) {
+                    if (bird.is_alive) {
+                        player_count--;
+                        bird.is_alive = false;
+                        bird.bird_unit.score -= Math.floor(0.6 * (Math.abs(bird.y - this.y))); // distance from opening, works without this
+                    }
+                }
+            }
+            
         }
 
         update() {
             this.x -= speed;
         }
+    }
+
+    function get_random_alive_bird() {
+        var bird;
+        for (i of Array(all_birds.length).keys()) {
+            bird = all_birds[i];
+            if (bird.is_alive) {
+                return bird;
+            }
+        }
+        return null;
     }
 
     //utility
@@ -468,17 +574,22 @@ var ai_game_sketch = function(sketch)
 
     function resetGame() {
         gameover = false;
-        gap = 80;
         speed = 5;
         score = 0;
-        flappy_bird.y = sketch.height / 2
-        flappy_bird.falls = false;
-        flappy_bird.velocityY = 0;
-        flappy_bird.angle = 0;
-        flappy_bird.flashAnim = 0;
-        flappy_bird.flashReturn = false;
+        player_count = NUMBER_OF_BIRDS;
+
+        start_next_generation();
+        for (let bird of all_birds) {
+            bird.y = sketch.height / 2
+            bird.is_alive = true;
+            bird.velocityY = 0;
+            bird.angle = 0;
+            bird.flashAnim = 0;
+            bird.flashReturn = false;
+            bird.target = 10000;
+        }
+        
         pipes = [];
-        flappy_bird.target = 10000;
         menu_gameover.ease = 0;
         sketch.redraw();
     }
@@ -581,7 +692,6 @@ var ai_game_sketch = function(sketch)
         }
         sketch.pop();
         sketch.redraw();
-        if (this_h && mouseReleaseEvent) { try { sound_sweetwing.play(); } catch (e) { } }
 
         return (this_h && mouseReleaseEvent);
     }
@@ -589,42 +699,7 @@ var ai_game_sketch = function(sketch)
     function smoothMove(pos, target, speed) {
         return pos + (target - pos) * speed;
     }
-
-    // js utility
-
-    /*
-    function preventDefault(e) {
-    e = e || window.event;
-    if (e.preventDefault)
-        e.preventDefault();
-    e.returnValue = false;  
-    }
-
-    function preventDefaultForScrollKeys(e) {
-        if (keys[e.keyCode]) {
-            preventDefault(e);
-            return false;
-        }
-    }
-
-    function disableScroll() {
-    if (window.addEventListener) // older FF
-        window.addEventListener('DOMMouseScroll', preventDefault, false);
-    window.onwheel = preventDefault; // modern standard
-    window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-    window.ontouchmove  = preventDefault; // mobile
-    document.onkeydown  = preventDefaultForScrollKeys;
-    }
-
-    function enableScroll() {
-        if (window.removeEventListener)
-            window.removeEventListener('DOMMouseScroll', preventDefault, false);
-        window.onmousewheel = document.onmousewheel = null; 
-        window.onwheel = null; 
-        window.ontouchmove = null;  
-        document.onkeydown = null;  
-    }*/
-
+    
     function mobile() {
         if (navigator.userAgent.match(/Android/i)
             || navigator.userAgent.match(/webOS/i)
@@ -640,5 +715,4 @@ var ai_game_sketch = function(sketch)
             return false;
         }
     }
-
 }

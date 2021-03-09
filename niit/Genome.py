@@ -73,7 +73,6 @@ class Genome(object):
         for con in child.get_connections():
             to_node = con.get_to()
             from_node = con.get_from()
-            # SELF.NODES MUST BE A SET, BECAUSE THIS LOOP PRODUCES DUPLICATE NODES
             child.add_node(to_node)
             child.add_node(from_node)
         return child
