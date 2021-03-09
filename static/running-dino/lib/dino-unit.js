@@ -7,8 +7,8 @@ class BirdUnit {
         this.nodes_dict = {};
         this.connections = {};
         this.decode_data();
-        this.input_size = 5;
-        this.output_size = 2;
+        this.input_size = 4;
+        this.output_size = 3;
         this.score = 0;
     }
 
@@ -48,16 +48,14 @@ class BirdUnit {
         for(var node of this.nodes) {
             if(node.id in this.connections)
             {
-                for(var tode of this.connections[node.id])
-                {
-                    var to_id = tode.to;
-                    var weight = tode.weight;
-                    var from_val = node.value;
-                    var to_val = this.nodes_dict[parseInt(to_id)].value;
-                    to_val += from_val * weight;
-                    var activated_val = this.sigmoid(to_val);
-                    this.nodes_dict[parseInt(to_id)].value = activated_val;
-                }
+
+                var to_id = this.connections[node.id][0].to;
+                var weight = this.connections[node.id][0].weight;
+                var from_val = node.value;
+                var to_val = this.nodes_dict[parseInt(to_id)].value;
+                to_val += from_val * weight;
+                var activated_val = this.sigmoid(to_val);
+                this.nodes_dict[parseInt(to_id)].value = activated_val;
             }
         }
         var exp_values = [];
@@ -66,7 +64,7 @@ class BirdUnit {
             var node = this.nodes[this.nodes.length - i - 1];
             exp_values.push(Math.exp(node.value));
         }
-        var sumica = exp_values.reduce((a, b) => a + b);
+        var sumica = exp_values.reduce((a, b) => a + b, 0)
         for(var i = 0; i < this.output_size; i++)
         {
             var out = exp_values[i];

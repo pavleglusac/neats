@@ -40,7 +40,7 @@ var ai_game_sketch = function(sketch)
     var highscore = 0;
     var speed = 5;
     var gravity = 0.45;
-    var gap = 85;
+    var gap = 87;
 
     var overflowX = 0;
 
@@ -171,7 +171,7 @@ var ai_game_sketch = function(sketch)
             if (pipes.length > 0) {
                 var reference;
                 for (var pipe of pipes) {
-                    if (pipe.x + sprite_pipe.width * image_scaling/2 > this.x) {
+                    if (pipe.x - sprite_pipe.width * image_scaling/2 > 0) {
                         reference = pipe;
                         break;
                     }
@@ -179,14 +179,13 @@ var ai_game_sketch = function(sketch)
                 this.h_distance_to_pipe_left = this.x + this.sprite_bird.width * image_scaling / 2 - (reference.x - sprite_pipe.width * image_scaling / 2);
                 this.h_distance_to_pipe_right = this.x - this.sprite_bird.width * image_scaling / 2 - (reference.x + sprite_pipe.width * image_scaling / 2);
                 this.v_distance_to_top_pipe = this.y - this.sprite_bird.height * image_scaling / 2 - (reference.y - reference.gapSize);
-                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 -(reference.y + reference.gapSize);
+                this.v_distance_to_bottom_pipe = this.y + this.sprite_bird.height * image_scaling / 2 - (reference.y + reference.gapSize);
             }
-            // console.log(this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe);
         }
 
         inputs() {
             this.look();
-            return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY]
+            return [this.h_distance_to_pipe_left, this.h_distance_to_pipe_right, this.v_distance_to_top_pipe, this.v_distance_to_bottom_pipe, this.velocityY];
         }
 
         kinematicMove() {
@@ -301,6 +300,7 @@ var ai_game_sketch = function(sketch)
         // if (generation > 1) { call neat.evolve() }
         new_birds = [];
         for (var unit of units) {
+            unit.score = 0;
             new_birds.push(new Bird(unit));
         }
         all_birds = new_birds;
@@ -403,7 +403,7 @@ var ai_game_sketch = function(sketch)
             sketch.strokeWeight(3);
             sketch.fill(255);
             sketch.textSize(26);
-            sketch.text("Birds left: " + player_count, sketch.width / 2, sketch.height - 25);
+            sketch.text("left alive: " + player_count, sketch.width / 2, sketch.height - 25);
             sketch.pop();
             sketch.redraw();
         }
@@ -467,7 +467,6 @@ var ai_game_sketch = function(sketch)
             best_unit = best_bird.bird_unit;
             
             for (i of Array(all_birds.length).keys()) {
-                console.log(i);
                 all_birds[i].velocityY = 0;
                 all_birds[i].fly = true;
                 all_birds[i].target = clamp(this.y - 60, -19, sketch.height);
@@ -514,30 +513,30 @@ var ai_game_sketch = function(sketch)
                     this.potential = false;
                     for (var b of all_birds) {
                         if (b.is_alive) {
-                            b.bird_unit.score += score;
+                            b.bird_unit.score += 10 * score;
                         }
                     }
                 }
             }
-            for (i of Array(all_birds.length).keys()) {
-                bird = all_birds[i];
+            for (let bird of all_birds) {
                 
                 if ((
-                    (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 15 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 15) &&
-                    (bird.y + bird.sprite_bird.height * image_scaling + 15 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling -15 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
+                    (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 12 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 12) &&
+                    (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling -12 < (this.y - this.gapSize - sprite_pipe.height * image_scaling / 2) + 200)
                 )
     
                     ||
     
                     (
-                        (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 5 && bird.x - 20 < this.x + bird.sprite_bird.width * image_scaling / 2 + 5) &&
-                        (bird.y + bird.sprite_bird.height * image_scaling + 15 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling - 15 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
+                        (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 5 && bird.x - 17 < this.x + bird.sprite_bird.width * image_scaling / 2 + 5) &&
+                        (bird.y + bird.sprite_bird.height * image_scaling + 12 > (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) - 200 && bird.y - bird.sprite_bird.height * image_scaling - 12 < (this.y + this.gapSize + sprite_pipe.height * image_scaling / 2) + 200)
                     )
     
                 ) {
                     if (bird.is_alive) {
                         player_count--;
                         bird.is_alive = false;
+                        bird.bird_unit.score -= Math.floor(0.6 * (Math.abs(bird.y - this.y))); // distance from opening, works without this
                     }
                 }
             }
@@ -580,8 +579,7 @@ var ai_game_sketch = function(sketch)
         player_count = NUMBER_OF_BIRDS;
 
         start_next_generation();
-        for (i of Array(all_birds.length).keys()) {
-            bird = all_birds[i];
+        for (let bird of all_birds) {
             bird.y = sketch.height / 2
             bird.is_alive = true;
             bird.velocityY = 0;
@@ -701,42 +699,7 @@ var ai_game_sketch = function(sketch)
     function smoothMove(pos, target, speed) {
         return pos + (target - pos) * speed;
     }
-
-    // js utility
-
-    /*
-    function preventDefault(e) {
-    e = e || window.event;
-    if (e.preventDefault)
-        e.preventDefault();
-    e.returnValue = false;  
-    }
-
-    function preventDefaultForScrollKeys(e) {
-        if (keys[e.keyCode]) {
-            preventDefault(e);
-            return false;
-        }
-    }
-
-    function disableScroll() {
-    if (window.addEventListener) // older FF
-        window.addEventListener('DOMMouseScroll', preventDefault, false);
-    window.onwheel = preventDefault; // modern standard
-    window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-    window.ontouchmove  = preventDefault; // mobile
-    document.onkeydown  = preventDefaultForScrollKeys;
-    }
-
-    function enableScroll() {
-        if (window.removeEventListener)
-            window.removeEventListener('DOMMouseScroll', preventDefault, false);
-        window.onmousewheel = document.onmousewheel = null; 
-        window.onwheel = null; 
-        window.ontouchmove = null;  
-        document.onkeydown = null;  
-    }*/
-
+    
     function mobile() {
         if (navigator.userAgent.match(/Android/i)
             || navigator.userAgent.match(/webOS/i)
