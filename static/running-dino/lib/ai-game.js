@@ -73,7 +73,10 @@ var ai_game_sketch = function(sketch)
   }
 
   async function resetGame () {
-    await send_data();
+    await send_data().done(() => {resumeRunning = true});
+
+    while(!resumeRunning) {}
+
     console.log(">>> GENERATION: ", generation, " <<<");
     startNextGeneration();
     handleHighscore();

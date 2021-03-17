@@ -3,6 +3,8 @@ var units = [];
 let netCanvas;
 var best_unit = null;
 
+var resumeRunning;
+
 /*$(document).ready(function(){
     $("button").click(function(){
         $.post("/flappy-bird", {data:"postdata123"}, function(data, status){

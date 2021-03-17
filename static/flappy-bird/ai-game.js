@@ -374,11 +374,11 @@ var ai_game_sketch = function(sketch)
         }
 
         // DEBUG FEATURE, CLICK ON GAME FOR ALL BIRDS TO DIE
-        // if (mousePressEvent || (keyPressEvent && key == ' ')) {
-        //     for (const b of all_birds) {
-        //         b.is_alive = false;
-        //     }
-        // }
+        if (mousePressEvent || (keyPressEvent && key == ' ')) {
+            for (const b of all_birds) {
+                b.is_alive = false;
+            }
+        }
 
         // Score
         if (!gameover) {
@@ -582,7 +582,10 @@ var ai_game_sketch = function(sketch)
 
     async function resetGame() {
 
-        await send_data();
+        resumeRunning = false;
+        await send_data().done(() => {resumeRunning = true});
+
+        while(!resumeRunning) {}
 
         gameover = false;
         speed = 5;

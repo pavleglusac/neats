@@ -4,6 +4,8 @@ let netCanvas;
 
 var best_unit = null;
 
+var resumeRunning = true;
+
 /*$(document).ready(function(){
     $("button").click(function(){
         $.post("/flappy-bird", {data:"postdata123"}, function(data, status){
@@ -27,6 +29,7 @@ function send_data()
     output_data = ""
     for(var i = 0; i < units.length; i++)
     {
+        console.log(units[i].score)
         output_data += units[i].id + ":" + units[i].score + ";";
     }
     return $.post("/flappy-bird", {data:output_data}, function(data, status){
