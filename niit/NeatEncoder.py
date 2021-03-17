@@ -19,6 +19,11 @@ def encode(units):
     return json.dumps(arr)
 
 def decode_data(data):
+    s = ""
+    for i in data.keys():
+        s += i
+    print(s)
+    data = s
     data = data.split(";")
     data.pop(-1)
     for entry in data:

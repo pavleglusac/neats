@@ -274,6 +274,7 @@ var ai_game_sketch = function(sketch)
 
     sketch.draw = function() {
         sketch.background(255, 255, 255);
+        
 
         switch (page) {
             case 'GAME':
@@ -429,7 +430,9 @@ var ai_game_sketch = function(sketch)
     }
 
     placeholder_bird = new Bird();
+
     function page_menu() {
+
         overflowX += speed;
         if (overflowX > sprite_city.width / image_scaling) {
             overflowX = 0;
@@ -580,13 +583,10 @@ var ai_game_sketch = function(sketch)
         return value;
     }
 
-    async function resetGame() {
-
-        resumeRunning = false;
-        await send_data().done(() => {resumeRunning = true});
-
-        while(!resumeRunning) {}
-
+    function resetGame() {
+        console.log("reset game called");
+        send_data();
+        console.log("finished await");
         gameover = false;
         speed = 5;
         score = 0;

@@ -15,7 +15,9 @@ def flappy_bird():
     param  = request.args.get('param', None)
 
     if request.method == 'POST':
-        encoder.decode_data(request.form['data'])
+        for i in request.form.keys():
+            print(i)
+        encoder.decode_data(request.form)
         print("BEFORE EVOLUTION")
         for species in neat.species:
             print(species.score)

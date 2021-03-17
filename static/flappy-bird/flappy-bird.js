@@ -32,10 +32,21 @@ function send_data()
         console.log(units[i].score)
         output_data += units[i].id + ":" + units[i].score + ";";
     }
-    return $.post("/flappy-bird", {data:output_data}, function(data, status){
-        units_data = JSON.parse(data);
-        change_units();
-    });
+    resumeRunning = false;
+    console.log("sending data");
+    $.ajax({
+        type: 'POST',
+        url: '/flappy-bird',
+        data: output_data, 
+        async: false,
+        success: function(data, status){
+            units_data = JSON.parse(data);
+            change_units();
+        },
+        error: function() {
+           alert("Your error message goes here");
+        }
+     });
 }
 
 
