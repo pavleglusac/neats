@@ -208,9 +208,7 @@ class Neat(object):
     def evolve(self):
         self.generate_species()
         self.kill_some()
-        print("Num of species before ", len(self.species))
         self.remove_extinct_species()
-        print("Num of species after ", len(self.species))
         self.reproduce()
         self.mutate()
 

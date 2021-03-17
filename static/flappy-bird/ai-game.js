@@ -252,8 +252,8 @@ var ai_game_sketch = function(sketch)
         blue_bird_frames.push(sprite_blue_bird_upflap);
         
         start_next_generation();
-        for(i of Array(all_birds.length).keys()) {
-            all_birds[i].y = sketch.height / 2;
+        for(const b of all_birds) {
+            b.y = sketch.height / 2;
         }
         best_unit = all_birds[0].bird_unit;
 
@@ -296,14 +296,13 @@ var ai_game_sketch = function(sketch)
     }
 
     function start_next_generation() {
-        console.log(">>> GENERATION: ", generation, " <<<");
         // if (generation > 1) { call neat.evolve() }
-        new_birds = [];
-        for (var unit of units) {
+        // ONLY REMEMBERS SCORE IN FIRST GENERATION ???
+        all_birds = [];
+        for (const unit of units) {
             unit.score = 0;
-            new_birds.push(new Bird(unit));
+            all_birds.push(new Bird(unit));
         }
-        all_birds = new_birds;
     }
 
     //EVENT
@@ -347,12 +346,12 @@ var ai_game_sketch = function(sketch)
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
         sketch.image(sprite_floor, sprite_floor.width/image_scaling + sprite_floor.width/image_scaling * 2 - overflowX, sketch.height - 18, sprite_floor.width * image_scaling, sprite_floor.height * image_scaling);
 
-        for (i of Array(all_birds.length).keys()) {
-            if (all_birds[i].is_alive) {
+        for (const bird of all_birds) {
+            if (bird.is_alive) {
                 all_dead = false;
-                all_birds[i].display();
-                all_birds[i].update();
-                all_birds[i].x = smoothMove(all_birds[i].x, 90, 0.02);
+                bird.display();
+                bird.update();
+                bird.x = smoothMove(bird.x, 90, 0.02);
             }
         }
 
@@ -360,7 +359,6 @@ var ai_game_sketch = function(sketch)
         
         if (all_dead) {
             generation++;
-            send_data();
             resetGame();
         }
 
@@ -374,7 +372,14 @@ var ai_game_sketch = function(sketch)
                 }
             }
         }
-        
+
+        // DEBUG FEATURE, CLICK ON GAME FOR ALL BIRDS TO DIE
+        // if (mousePressEvent || (keyPressEvent && key == ' ')) {
+        //     for (const b of all_birds) {
+        //         b.is_alive = false;
+        //     }
+        // }
+
         // Score
         if (!gameover) {
             sketch.push();
@@ -410,8 +415,8 @@ var ai_game_sketch = function(sketch)
         
         sketch.push();
         sketch.noStroke();
-        for (i of Array(all_birds.length).keys()) {
-            sketch.fill(255, all_birds[i].flashAnim);
+        for (const b of all_birds) {
+            sketch.fill(255,  b.flashAnim);
         }
         sketch.rect(sketch.width / 2, sketch.height / 2, sketch.width, sketch.height);
         sketch.pop();
@@ -511,14 +516,14 @@ var ai_game_sketch = function(sketch)
                 if (this.potential && (random_bird.x > this.x - random_bird.sprite_bird.width * image_scaling / 2 - 10 && random_bird.x < this.x + random_bird.sprite_bird.width * image_scaling / 2 + 10)) {
                     score++;
                     this.potential = false;
-                    for (var b of all_birds) {
+                    for (const b of all_birds) {
                         if (b.is_alive) {
-                            b.bird_unit.score += 10 * score;
+                            b.bird_unit.score += score;  // 10 * score when calculating distance from opening
                         }
                     }
                 }
             }
-            for (let bird of all_birds) {
+            for (const bird of all_birds) {
                 
                 if ((
                     (bird.x + bird.sprite_bird.width * image_scaling / 2 > this.x - bird.sprite_bird.width * image_scaling / 2 - 12 && bird.x - bird.sprite_bird.width * image_scaling / 2  < this.x + bird.sprite_bird.width * image_scaling / 2 + 12) &&
@@ -536,7 +541,10 @@ var ai_game_sketch = function(sketch)
                     if (bird.is_alive) {
                         player_count--;
                         bird.is_alive = false;
-                        bird.bird_unit.score -= Math.floor(0.6 * (Math.abs(bird.y - this.y))); // distance from opening, works without this
+                        // bird.bird_unit.score -= Math.floor(0.2 * (Math.abs(bird.y - this.y))); // distance from opening, works without this
+                        // if (bird.bird_unit.score < 0) {
+                        //     bird.bird_unit.score = 0
+                        // }
                     }
                 }
             }
@@ -572,14 +580,18 @@ var ai_game_sketch = function(sketch)
         return value;
     }
 
-    function resetGame() {
+    async function resetGame() {
+
+        await send_data();
+
         gameover = false;
         speed = 5;
         score = 0;
         player_count = NUMBER_OF_BIRDS;
 
+        console.log(">>> GENERATION: ", generation, " <<<");
         start_next_generation();
-        for (let bird of all_birds) {
+        for (const bird of all_birds) {
             bird.y = sketch.height / 2
             bird.is_alive = true;
             bird.velocityY = 0;

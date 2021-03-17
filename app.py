@@ -16,7 +16,13 @@ def flappy_bird():
 
     if request.method == 'POST':
         encoder.decode_data(request.form['data'])
+        print("BEFORE EVOLUTION")
+        for species in neat.species:
+            print(species.score)
         neat.evolve()
+        print("AFTER EVOLUTION")
+        for species in neat.species:
+            print(species.score)
         data = encoder.encode(neat.units)
         return data, 200
 

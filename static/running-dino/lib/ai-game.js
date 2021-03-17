@@ -7,6 +7,8 @@ var ai_game_sketch = function(sketch)
   window.config = config;
   aiLocalConfig = JSON.parse(JSON.stringify(window.config));
 
+  var canvas;
+
   const NUMBER_OF_DINOS = units.length;
   var playerCount = NUMBER_OF_DINOS;
 
@@ -70,7 +72,8 @@ var ai_game_sketch = function(sketch)
     console.log('HIGHSCORE >>> ', STATE.highscore)
   }
 
-  function resetGame () {
+  async function resetGame () {
+    await send_data();
     console.log(">>> GENERATION: ", generation, " <<<");
     startNextGeneration();
     handleHighscore();
@@ -322,7 +325,7 @@ var ai_game_sketch = function(sketch)
 
   // triggered after preload
   sketch.setup = () => {
-    const canvas = sketch.createCanvas(1200, 300);
+    canvas = sketch.createCanvas(1200, 300);
 
     startNextGeneration();
 
@@ -331,8 +334,17 @@ var ai_game_sketch = function(sketch)
     sketch.noLoop();
 
     canvas.mouseClicked(() => {
+      console.log("PLEASE")
       if (!STATE.isRunning) {
         resetGame();
+      }
+      else {
+        // DEBUG FEATURE
+        for (const dino of allDinos) {
+          dino.isAlive = false;
+          playerCount = 0;
+          
+        }
       }
     })
   }
@@ -355,18 +367,20 @@ var ai_game_sketch = function(sketch)
       drawBirds();
     }
 
-    for (var dino of allDinos) {
+    for (const dino of allDinos) {
       if (dino.isAlive && dino.hits([STATE.cacti[0], STATE.birds[0]])) {
         dino.isAlive = false;
-        dino.unit.score = STATE.score - dino.jumps;
+        dino.unit.score = STATE.score - 5 * dino.jumps;
         playerCount--;
       }
       if (dino.isAlive) {
         var network_output = dino.unit.calculate(dino.inputs(getNextObstacle()));
         if (network_output[0] > network_output[1] && network_output[0] > network_output[2]) {
           dino.duck(false);
-          dino.jump();
-          dino.jumps++;
+          if (dino.relativeY === 0) {
+            dino.jump();
+            dino.jumps++;
+          }
         } else if (network_output[2] > network_output[1] && network_output[2] > network_output[0]) {
           dino.duck(true);
         } else {
@@ -381,9 +395,8 @@ var ai_game_sketch = function(sketch)
     }
     
     if (playerCount <= 0) {
-      send_data();
-      resetGame();
       generation++;
+      resetGame();
     }
     updateScore();
   }

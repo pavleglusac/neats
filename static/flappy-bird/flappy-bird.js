@@ -29,7 +29,7 @@ function send_data()
     {
         output_data += units[i].id + ":" + units[i].score + ";";
     }
-    $.post("/flappy-bird", {data:output_data}, function(data, status){
+    return $.post("/flappy-bird", {data:output_data}, function(data, status){
         units_data = JSON.parse(data);
         change_units();
     });
