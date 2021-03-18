@@ -26,6 +26,7 @@ def decode_data(data):
     data = s
     data = data.split(";")
     data.pop(-1)
+    print(data)
     for entry in data:
         entry = entry.split(":")
         id = int(entry[0])

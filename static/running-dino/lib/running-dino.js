@@ -30,10 +30,19 @@ function send_data()
     {
         output_data += units[i].id + ":" + units[i].score + ";";
     }
-    return $.post("/running-dino", {data:output_data}, function(data, status){
-        units_data = JSON.parse(data);
-        change_units();
-    });
+    $.ajax({
+        type: 'POST',
+        url: '/running-dino',
+        data: output_data, 
+        async: false,
+        success: function(data, status){
+            units_data = JSON.parse(data);
+            change_units();
+        },
+        error: function() {
+           console.log("alert");
+        }
+     });
 }
 
 

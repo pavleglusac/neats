@@ -45,7 +45,7 @@ def running_dinosaur():
     param  = request.args.get('param', None)
 
     if request.method == 'POST':
-        encoder.decode_data(request.form['data'])
+        encoder.decode_data(request.form)
         neat.evolve()
         data = encoder.encode(neat.units)
         return data, 200

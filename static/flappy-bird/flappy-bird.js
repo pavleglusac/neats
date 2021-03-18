@@ -44,7 +44,7 @@ function send_data()
             change_units();
         },
         error: function() {
-           alert("Your error message goes here");
+            console.log("alert");
         }
      });
 }
